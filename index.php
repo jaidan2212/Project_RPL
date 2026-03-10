@@ -161,19 +161,19 @@
       <div class="col-md-4 animate__animated animate__fadeInUp animate__delay-1s">
         <blockquote class="blockquote">
           <p>"Kopi Arabica nya wangi banget, bikin pagi lebih semangat!"</p>
-          <footer class="blockquote-footer text-white">Rina, Surabaya</footer>
+          <footer class="blockquote-footer text-white">Zaidan, Surabaya</footer>
         </blockquote>
       </div>
       <div class="col-md-4 animate__animated animate__fadeInUp animate__delay-2s">
         <blockquote class="blockquote">
           <p>"Harga bersahabat tapi kualitas premium. Recommended!"</p>
-          <footer class="blockquote-footer text-white">Andi, Malang</footer>
+          <footer class="blockquote-footer text-white">Habiba, Tuban</footer>
         </blockquote>
       </div>
       <div class="col-md-4 animate__animated animate__fadeInUp animate__delay-3s">
         <blockquote class="blockquote">
           <p>"Pengiriman cepat, kemasan rapi. Pasti repeat order."</p>
-          <footer class="blockquote-footer text-white">Dewi, Jakarta</footer>
+          <footer class="blockquote-footer text-white">Riel, Bangkalan</footer>
         </blockquote>
       </div>
     </div>
