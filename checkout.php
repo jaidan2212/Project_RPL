@@ -110,7 +110,7 @@ foreach($produkDipilih as $id){
 
 <div class="bg-warning py-5 text-center">
   <h2 class="mb-3">Tambah Produk Lain?</h2>
-  <p class="lead fw-bold">Beli 2 produk atau lebih, dapat diskon 10% 🎉</p>
+  <p class="lead fw-bold">Beli 2 produk atau lebih diskon 10% 🎉</p>
   <a href="produk.php" class="btn btn-dark btn-lg btn-anim">Lihat Produk Lain</a>
 </div>
 
