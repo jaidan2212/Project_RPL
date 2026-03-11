@@ -7,21 +7,33 @@ $email = $_POST['email'];
 $pembayaran = $_POST['pembayaran'];
 
 $total = 0;
+$total_item = 0;
 
+// Hitung total & jumlah item
 foreach($produkDipilih as $id){
     $produk = $koneksi->query("SELECT * FROM produk WHERE id='$id'")->fetch_assoc();
     if($produk){
         $qty = isset($jumlahDipilih[$id]) ? (int)$jumlahDipilih[$id] : 1;
         $subtotal = $produk['harga'] * $qty;
         $total += $subtotal;
+        $total_item += $qty;
     }
 }
 
+// Terapkan diskon 10% jika beli lebih dari 1 produk
+$diskon = 0;
+if($total_item > 1){
+    $diskon = 0.1 * $total;
+    $total = $total - $diskon;
+}
+
+// Simpan pesanan utama
 $sql = "INSERT INTO pesanan_header (nama,email,pembayaran,tanggal,total) 
         VALUES ('$nama','$email','$pembayaran',NOW(),'$total')";
 $koneksi->query($sql);
 $id_pesanan = $koneksi->insert_id;
 
+// Simpan detail pesanan
 foreach($produkDipilih as $id){
     $produk = $koneksi->query("SELECT * FROM produk WHERE id='$id'")->fetch_assoc();
     if($produk){
@@ -95,6 +107,9 @@ foreach($produkDipilih as $id){
           </li>
           <?php } ?>
         </ul>
+        <?php if($diskon > 0){ ?>
+          <p><strong>Diskon 10%:</strong> Rp <?php echo number_format($diskon,0,',','.'); ?></p>
+        <?php } ?>
         <h5>Total Bayar: Rp <?php echo number_format($total,0,',','.'); ?></h5>
 
         <div class="alert alert-success text-center mt-4">
