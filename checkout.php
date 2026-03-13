@@ -1,5 +1,12 @@
-<?php include 'koneksi.php'; ?>
 <?php
+session_start();
+if(!isset($_SESSION['username'])){
+    header("Location: login.php");
+    exit;
+}
+
+include 'koneksi.php'; 
+
 $produkDipilih = isset($_POST['produk_id']) ? $_POST['produk_id'] : [];
 $jumlahDipilih = isset($_POST['jumlah']) ? $_POST['jumlah'] : [];
 
@@ -7,8 +14,10 @@ $daftarProduk = [];
 $total = 0;
 
 foreach($produkDipilih as $id){
-    $produk = $koneksi->query("SELECT * FROM produk WHERE id='$id'")->fetch_assoc();
-    if($produk){
+    $id = (int)$id;
+    $result = $koneksi->query("SELECT * FROM produk WHERE id='$id'");
+    if($result && $result->num_rows > 0){
+        $produk = $result->fetch_assoc();
         $qty = isset($jumlahDipilih[$id]) ? (int)$jumlahDipilih[$id] : 1;
         $subtotal = $produk['harga'] * $qty;
         $daftarProduk[] = [
@@ -28,7 +37,6 @@ foreach($produkDipilih as $id){
   <meta charset="UTF-8">
   <title>Checkout Produk</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Poppins', sans-serif;
@@ -72,7 +80,7 @@ foreach($produkDipilih as $id){
           <ul class="list-group mb-3">
             <?php foreach($daftarProduk as $p){ ?>
               <li class="list-group-item d-flex justify-content-between align-items-center">
-                <?php echo $p['nama']; ?> (x<?php echo $p['jumlah']; ?>)
+                <?php echo htmlspecialchars($p['nama']); ?> (x<?php echo $p['jumlah']; ?>)
                 <span>Rp <?php echo number_format($p['subtotal'],0,',','.'); ?></span>
               </li>
             <?php } ?>
@@ -106,12 +114,6 @@ foreach($produkDipilih as $id){
       </div>
     </div>
   <?php } ?>
-</div>
-
-<div class="bg-warning py-5 text-center">
-  <h2 class="mb-3">Tambah Produk Lain?</h2>
-  <p class="lead fw-bold">Beli 2 produk atau lebih diskon 10% 🎉</p>
-  <a href="produk.php" class="btn btn-dark btn-lg btn-anim">Lihat Produk Lain</a>
 </div>
 
 <footer class="text-white text-center py-3">

@@ -9,7 +9,6 @@ $pembayaran = $_POST['pembayaran'];
 $total = 0;
 $total_item = 0;
 
-// Hitung total & jumlah item
 foreach($produkDipilih as $id){
     $produk = $koneksi->query("SELECT * FROM produk WHERE id='$id'")->fetch_assoc();
     if($produk){
@@ -20,20 +19,17 @@ foreach($produkDipilih as $id){
     }
 }
 
-// Terapkan diskon 10% jika beli lebih dari 1 produk
 $diskon = 0;
 if($total_item > 1){
     $diskon = 0.1 * $total;
     $total = $total - $diskon;
 }
 
-// Simpan pesanan utama
 $sql = "INSERT INTO pesanan_header (nama,email,pembayaran,tanggal,total) 
         VALUES ('$nama','$email','$pembayaran',NOW(),'$total')";
 $koneksi->query($sql);
 $id_pesanan = $koneksi->insert_id;
 
-// Simpan detail pesanan
 foreach($produkDipilih as $id){
     $produk = $koneksi->query("SELECT * FROM produk WHERE id='$id'")->fetch_assoc();
     if($produk){

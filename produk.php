@@ -1,4 +1,7 @@
-<?php include 'koneksi.php'; ?>
+<?php
+session_start();
+include 'koneksi.php';
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -31,6 +34,12 @@
             font-weight: bold;
         }
         footer { background: #3e2723; }
+        .foto-user {
+            width:30px;
+            height:30px;
+            border-radius:50%;
+            object-fit:cover;
+        }
     </style>
 </head>
 <body>
@@ -47,7 +56,21 @@
       <ul class="navbar-nav ms-auto">
         <li class="nav-item"><a class="nav-link" href="index.php">Home</a></li>
         <li class="nav-item"><a class="nav-link active" href="produk.php">Produk</a></li>
-        <li class="nav-item"><a class="nav-link" href="admin.php">Admin</a></li>
+        <?php if(isset($_SESSION['username'])){ ?>
+          <li class="nav-item d-flex align-items-center">
+            <?php 
+            $fotoPath = "assets/foto/".$_SESSION['foto'];
+            if(!empty($_SESSION['foto']) && file_exists($fotoPath)){ ?>
+                <img src="<?php echo $fotoPath; ?>" class="foto-user me-2">
+            <?php } else { ?>
+                <img src="assets/foto/default.png" class="foto-user me-2">
+            <?php } ?>
+            <span class="nav-link">Hai, <?php echo $_SESSION['username']; ?></span>
+          </li>
+          <li class="nav-item"><a class="nav-link" href="logout.php">Logout</a></li>
+        <?php } else { ?>
+          <li class="nav-item"><a class="nav-link" href="login.php">Login</a></li>
+        <?php } ?>
       </ul>
     </div>
   </div>
@@ -99,7 +122,7 @@
   <h2 class="mb-3">Promo Spesial!</h2>
   <p class="lead fw-bold">Diskon 20% untuk pembelian pertama 🎉</p>
   <p>Gratis ongkir untuk wilayah Jawa Timur</p>
-  <a href="#" class="btn btn-dark btn-lg">Belanja Sekarang</a>
+  <a href="produk.php" class="btn btn-dark btn-lg">Belanja Sekarang</a>
 </div>
 
 <footer class="text-white text-center py-3">

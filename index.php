@@ -1,4 +1,7 @@
-<?php include 'koneksi.php'; ?>
+<?php
+session_start();
+include 'koneksi.php';
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -30,13 +33,21 @@
         footer {
             background: #3e2723;
         }
+
+        .foto-user {
+            width:30px;
+            height:30px;
+            border-radius:50%;
+            object-fit:cover;
+        }
+
     </style>
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
   <div class="container">
-    <a class="navbar-brand fw-bold" href="index.php">☕ Toko Kopi</a>
+    <a class="navbar-brand fw-bold" href="index.php">☕ Kopiku</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
             data-bs-target="#navbarNav" aria-controls="navbarNav" 
             aria-expanded="false" aria-label="Toggle navigation">
@@ -46,11 +57,27 @@
       <ul class="navbar-nav ms-auto">
         <li class="nav-item"><a class="nav-link active" href="index.php">Home</a></li>
         <li class="nav-item"><a class="nav-link" href="produk.php">Produk</a></li>
-        <li class="nav-item"><a class="nav-link" href="admin.php">Admin</a></li>
+
+        <?php if(isset($_SESSION['username'])){ ?>
+          <li class="nav-item d-flex align-items-center">
+            <?php 
+            $fotoPath = "assets/foto/".$_SESSION['foto'];
+            if(!empty($_SESSION['foto']) && file_exists($fotoPath)){ ?>
+                <img src="<?php echo $fotoPath; ?>" class="foto-user me-2">
+            <?php } else { ?>
+                <img src="assets/foto/default.png" class="foto-user me-2">
+            <?php } ?>
+            <span class="nav-link">Hai, <?php echo $_SESSION['username']; ?></span>
+          </li>
+          <li class="nav-item"><a class="nav-link" href="logout.php">Logout</a></li>
+        <?php } else { ?>
+          <li class="nav-item"><a class="nav-link" href="login.php">Login</a></li>
+        <?php } ?>
       </ul>
     </div>
   </div>
 </nav>
+
 
 <div id="kopiCarousel" class="carousel slide" data-bs-ride="carousel">
   <div class="carousel-inner">
@@ -59,7 +86,11 @@
       <div class="carousel-caption d-none d-md-block">
         <h2 class="fw-bold">Nikmati Kopi Premium Setiap Hari</h2>
         <p>Rasakan kebahagiaan di setiap tegukan.</p>
-        <a href="produk.php" class="btn btn-primary btn-lg btn-anim">Belanja Sekarang</a>
+<?php if(isset($_SESSION['username'])){ ?>
+  <a href="produk.php" class="btn btn-primary btn-lg btn-anim">Belanja Sekarang</a>
+<?php } else { ?>
+  <a href="login.php" class="btn btn-warning btn-lg btn-anim">Login untuk Belanja</a>
+<?php } ?>
       </div>
     </div>
     <div class="carousel-item">
@@ -121,11 +152,16 @@
         <div class="card-body text-center">
           <h5 class="card-title"><?php echo $row['nama']; ?></h5>
           <p class="card-text">Rp <?php echo number_format($row['harga'],0,',','.'); ?></p>
-          <a href="produk.php" class="btn btn-primary btn-sm">Lihat Detail</a>
+          <?php if(isset($_SESSION['username'])){ ?>
+            <a href="checkout.php?id=<?php echo $row['id']; ?>" class="btn btn-success btn-sm">Pesan</a>
+          <?php } else { ?>
+            <a href="login.php" class="btn btn-warning btn-sm">Login untuk Pesan</a>
+          <?php } ?>
         </div>
       </div>
     </div>
     <?php } ?>
+
   </div>
 </div>
 
@@ -133,7 +169,11 @@
   <h2 class="mb-3">Promo Spesial!</h2>
   <p class="lead fw-bold">Diskon 20% untuk pembelian pertama Anda 🎉</p>
   <p>Gratis ongkir untuk wilayah Jawa Timur</p>
-  <a href="produk.php" class="btn btn-dark btn-lg btn-anim">Belanja Sekarang</a>
+<?php if(isset($_SESSION['username'])){ ?>
+  <a href="produk.php" class="btn btn-primary btn-lg btn-anim">Belanja Sekarang</a>
+<?php } else { ?>
+  <a href="login.php" class="btn btn-warning btn-lg btn-anim">Login untuk Belanja</a>
+<?php } ?>
 </div>
 
 <div class="container my-5">
@@ -173,7 +213,7 @@
       <div class="col-md-4 animate__animated animate__fadeInUp animate__delay-3s">
         <blockquote class="blockquote">
           <p>"Pengiriman cepat, kemasan rapi. Pasti repeat order."</p>
-          <footer class="blockquote-footer text-white">Riel, Bangkalan</footer>
+          <footer class="blockquote-footer text-white">Hasbul, Bangkalan</footer>
         </blockquote>
       </div>
     </div>
