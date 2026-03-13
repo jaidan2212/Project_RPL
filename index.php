@@ -12,7 +12,8 @@ include 'koneksi.php';
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #f5f0e1, #e0c097); 
+            /* Tema Merah: Gradasi soft red/peach */
+            background: linear-gradient(135deg, #fff0f0, #ffcccc); 
         }
         h1, h2, h3 {
             font-family: 'Playfair Display', serif;
@@ -22,30 +23,31 @@ include 'koneksi.php';
             transition: 0.3s;
         }
         .feature-card {
-            background-color: #fff8f0;
-            border: none;
+            background-color: #ffffff;
+            border: 1px solid #ffe5e5;
         }
         .feature-card:hover {
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(139, 0, 0, 0.2); /* Shadow kemerahan */
             transform: translateY(-5px);
             transition: 0.3s;
         }
-        footer {
-            background: #3e2723;
+        .navbar-custom {
+            background-color: #8B0000 !important; /* Merah Marun */
         }
-
+        footer {
+            background: #5c0000; /* Merah Gelap */
+        }
         .foto-user {
             width:30px;
             height:30px;
             border-radius:50%;
             object-fit:cover;
         }
-
     </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+<nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
   <div class="container">
     <a class="navbar-brand fw-bold" href="index.php">☕ Kopiku</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
@@ -59,7 +61,12 @@ include 'koneksi.php';
         <li class="nav-item"><a class="nav-link" href="produk.php">Produk</a></li>
 
         <?php if(isset($_SESSION['username'])){ ?>
-          <li class="nav-item d-flex align-items-center">
+          
+          <?php if(isset($_SESSION['role']) && $_SESSION['role'] == 'admin'){ ?>
+            <li class="nav-item"><a class="nav-link text-warning fw-bold" href="admin.php">⚙️ Dashboard Admin</a></li>
+          <?php } ?>
+
+          <li class="nav-item d-flex align-items-center ms-3">
             <?php 
             $fotoPath = "assets/foto/".$_SESSION['foto'];
             if(!empty($_SESSION['foto']) && file_exists($fotoPath)){ ?>
@@ -84,13 +91,13 @@ include 'koneksi.php';
     <div class="carousel-item active">
       <img src="assets/gambar/Index.jpg" class="d-block w-100" style="height:450px; object-fit:cover;">
       <div class="carousel-caption d-none d-md-block">
-        <h2 class="fw-bold">Nikmati Kopi Premium Setiap Hari</h2>
-        <p>Rasakan kebahagiaan di setiap tegukan.</p>
-<?php if(isset($_SESSION['username'])){ ?>
-  <a href="produk.php" class="btn btn-primary btn-lg btn-anim">Belanja Sekarang</a>
-<?php } else { ?>
-  <a href="login.php" class="btn btn-warning btn-lg btn-anim">Login untuk Belanja</a>
-<?php } ?>
+        <h2 class="fw-bold text-white">Nikmati Kopi Premium Setiap Hari</h2>
+        <p class="text-white">Rasakan kebahagiaan di setiap tegukan.</p>
+        <?php if(isset($_SESSION['username'])){ ?>
+          <a href="produk.php" class="btn btn-danger btn-lg btn-anim">Belanja Sekarang</a>
+        <?php } else { ?>
+          <a href="login.php" class="btn btn-light text-danger fw-bold btn-lg btn-anim">Login untuk Belanja</a>
+        <?php } ?>
       </div>
     </div>
     <div class="carousel-item">
@@ -119,20 +126,20 @@ include 'koneksi.php';
 <div class="container my-5">
   <div class="row text-center">
     <div class="col-md-4">
-      <div class="card feature-card p-3">
-        <h3>Kualitas Premium</h3>
+      <div class="card feature-card p-3 shadow-sm">
+        <h3 class="text-danger">Kualitas Premium</h3>
         <p>Biji kopi pilihan dengan cita rasa khas Indonesia.</p>
       </div>
     </div>
     <div class="col-md-4">
-      <div class="card feature-card p-3">
-        <h3>Harga Terjangkau</h3>
+      <div class="card feature-card p-3 shadow-sm">
+        <h3 class="text-danger">Harga Terjangkau</h3>
         <p>Kopi berkualitas dengan harga bersahabat.</p>
       </div>
     </div>
     <div class="col-md-4">
-      <div class="card feature-card p-3">
-        <h3>Pengiriman Cepat</h3>
+      <div class="card feature-card p-3 shadow-sm">
+        <h3 class="text-danger">Pengiriman Cepat</h3>
         <p>Pesanan dikirim langsung ke rumah Anda.</p>
       </div>
     </div>
@@ -140,80 +147,79 @@ include 'koneksi.php';
 </div>
 
 <div class="container my-5">
-  <h2 class="text-center mb-4">Produk Unggulan</h2>
+  <h2 class="text-center mb-4" style="color: #8B0000;">Produk Unggulan</h2>
   <div class="row">
     <?php
     $result = $koneksi->query("SELECT * FROM produk LIMIT 4");
     while($row = $result->fetch_assoc()){
     ?>
     <div class="col-md-3 mb-4">
-      <div class="card h-100 shadow-sm">
+      <div class="card h-100 shadow-sm border-0">
         <img src="assets/gambar/<?php echo $row['gambar']; ?>" class="card-img-top" style="height:200px; object-fit:cover;">
         <div class="card-body text-center">
-          <h5 class="card-title"><?php echo $row['nama']; ?></h5>
-          <p class="card-text">Rp <?php echo number_format($row['harga'],0,',','.'); ?></p>
+          <h5 class="card-title fw-bold"><?php echo $row['nama']; ?></h5>
+          <p class="card-text text-danger fw-bold">Rp <?php echo number_format($row['harga'],0,',','.'); ?></p>
           <?php if(isset($_SESSION['username'])){ ?>
-            <a href="checkout.php?id=<?php echo $row['id']; ?>" class="btn btn-success btn-sm">Pesan</a>
+            <a href="checkout.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger btn-sm w-100 btn-anim">Pesan</a>
           <?php } else { ?>
-            <a href="login.php" class="btn btn-warning btn-sm">Login untuk Pesan</a>
+            <a href="login.php" class="btn btn-warning btn-sm w-100 btn-anim">Login untuk Pesan</a>
           <?php } ?>
         </div>
       </div>
     </div>
     <?php } ?>
-
   </div>
 </div>
 
-<div class="bg-warning py-5 text-center">
+<div class="bg-danger text-white py-5 text-center shadow-lg">
   <h2 class="mb-3">Promo Spesial!</h2>
   <p class="lead fw-bold">Diskon 20% untuk pembelian pertama Anda 🎉</p>
   <p>Gratis ongkir untuk wilayah Jawa Timur</p>
 <?php if(isset($_SESSION['username'])){ ?>
-  <a href="produk.php" class="btn btn-primary btn-lg btn-anim">Belanja Sekarang</a>
+  <a href="produk.php" class="btn btn-light text-danger fw-bold btn-lg btn-anim">Belanja Sekarang</a>
 <?php } else { ?>
-  <a href="login.php" class="btn btn-warning btn-lg btn-anim">Login untuk Belanja</a>
+  <a href="login.php" class="btn btn-warning text-dark fw-bold btn-lg btn-anim">Login untuk Belanja</a>
 <?php } ?>
 </div>
 
 <div class="container my-5">
-  <h2 class="text-center mb-4">Galeri Lifestyle</h2>
+  <h2 class="text-center mb-4" style="color: #8B0000;">Galeri Lifestyle</h2>
   <div class="row">
     <div class="col-md-3 mb-4">
-      <img src="assets/gambar/arabica.jpg" class="img-fluid rounded shadow-sm" alt="Ngopi pagi">
+      <img src="assets/gambar/arabica.jpg" class="img-fluid rounded shadow-sm border border-danger border-2" alt="Ngopi pagi">
     </div>
     <div class="col-md-3 mb-4">
-      <img src="assets/gambar/robusta.jpg" class="img-fluid rounded shadow-sm" alt="Proses roasting">
+      <img src="assets/gambar/robusta.jpg" class="img-fluid rounded shadow-sm border border-danger border-2" alt="Proses roasting">
     </div>
     <div class="col-md-3 mb-4">
-      <img src="assets/gambar/liberica.jpg" class="img-fluid rounded shadow-sm" alt="Suasana coffee shop">
+      <img src="assets/gambar/liberica.jpg" class="img-fluid rounded shadow-sm border border-danger border-2" alt="Suasana coffee shop">
     </div>
     <div class="col-md-3 mb-4">
-      <img src="assets/gambar/arabica.jpg" class="img-fluid rounded shadow-sm" alt="Biji kopi premium">
+      <img src="assets/gambar/arabica.jpg" class="img-fluid rounded shadow-sm border border-danger border-2" alt="Biji kopi premium">
     </div>
   </div>
 </div>
 
-<div class="bg-dark py-5">
+<div class="py-5" style="background-color: #2b0000;">
   <div class="container text-center text-white">
     <h2 class="mb-4 animate__animated animate__fadeInDown">Apa Kata Pelanggan Kami</h2>
     <div class="row">
       <div class="col-md-4 animate__animated animate__fadeInUp animate__delay-1s">
         <blockquote class="blockquote">
           <p>"Kopi Arabica nya wangi banget, bikin pagi lebih semangat!"</p>
-          <footer class="blockquote-footer text-white">Zaidan, Surabaya</footer>
+          <footer class="blockquote-footer text-light mt-2">Zaidan, Surabaya</footer>
         </blockquote>
       </div>
       <div class="col-md-4 animate__animated animate__fadeInUp animate__delay-2s">
         <blockquote class="blockquote">
           <p>"Harga bersahabat tapi kualitas premium. Recommended!"</p>
-          <footer class="blockquote-footer text-white">Habiba, Tuban</footer>
+          <footer class="blockquote-footer text-light mt-2">Habiba, Tuban</footer>
         </blockquote>
       </div>
       <div class="col-md-4 animate__animated animate__fadeInUp animate__delay-3s">
         <blockquote class="blockquote">
           <p>"Pengiriman cepat, kemasan rapi. Pasti repeat order."</p>
-          <footer class="blockquote-footer text-white">Hasbul, Bangkalan</footer>
+          <footer class="blockquote-footer text-light mt-2">Hasbul, Bangkalan</footer>
         </blockquote>
       </div>
     </div>
@@ -221,13 +227,13 @@ include 'koneksi.php';
 </div>
 
 <div class="container my-5 text-center">
-  <h2>Dapatkan Promo & Info Terbaru</h2>
+  <h2 style="color: #8B0000;">Dapatkan Promo & Info Terbaru</h2>
   <form class="row justify-content-center mt-3" onsubmit="return validateEmail()">
     <div class="col-md-6">
-      <input type="email" id="emailInput" class="form-control" placeholder="Masukkan email Anda">
+      <input type="email" id="emailInput" class="form-control border-danger" placeholder="Masukkan email Anda">
     </div>
     <div class="col-md-2">
-      <button type="submit" class="btn btn-success btn-anim w-100">Subscribe</button>
+      <button type="submit" class="btn btn-danger btn-anim w-100">Subscribe</button>
     </div>
   </form>
   <p id="emailMessage" class="mt-3 fw-bold"></p>
@@ -252,22 +258,19 @@ function validateEmail() {
 }
 </script>
 
-
-<div class="bg-light py-5">
+<div class="py-5" style="background-color: #ffe5e5;">
   <div class="container text-center">
-    <h2 class="mb-4">Tentang Kami</h2>
-    <p class="lead">Toko Biji Kopi berdiri dengan misi mendukung petani lokal Indonesia. 
+    <h2 class="mb-4" style="color: #8B0000;">Tentang Kami</h2>
+    <p class="lead" style="color: #5c0000;">Toko Biji Kopi berdiri dengan misi mendukung petani lokal Indonesia. 
     Kami percaya setiap biji kopi punya cerita, dari kebun hingga cangkir Anda. 
     Filosofi kami sederhana: menghadirkan rasa otentik, menjaga kualitas, dan 
     menyebarkan kebahagiaan lewat secangkir kopi.</p>
   </div>
 </div>
 
-
 <footer class="text-white text-center py-3">
     <p>&copy; <?php echo date("Y"); ?> Toko Biji Kopi. All rights reserved.</p>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

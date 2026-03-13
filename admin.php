@@ -1,87 +1,100 @@
-<?php include 'koneksi.php'; ?>
-
 <?php
-if(isset($_POST['simpan'])){
-    $nama = $_POST['nama'];
-    $harga = $_POST['harga'];
+session_start();
+include 'koneksi.php';
 
-    $gambar = $_FILES['gambar']['name'];
-    $tmp = $_FILES['gambar']['tmp_name'];
-
-    move_uploaded_file($tmp, "assets/gambar/".$gambar);
-
-    $sql = "INSERT INTO produk (nama,harga,gambar) VALUES ('$nama','$harga','$gambar')";
-    if($koneksi->query($sql)){
-        echo "<div class='alert alert-success text-center'>Produk berhasil ditambahkan!</div>";
-    } else {
-        echo "<div class='alert alert-danger text-center'>Error: ".$koneksi->error."</div>";
-    }
+// Proteksi: Cuma admin yang boleh masuk
+if(!isset($_SESSION['username']) || $_SESSION['role'] != 'admin'){
+    header("Location: login.php");
+    exit;
 }
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Admin - Tambah Produk</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #f5f0e1, #e0c097);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    h1,h2,h3 { font-family: 'Playfair Display', serif; }
-    .card-custom { background:#fff8f0; border:none; box-shadow:0 4px 15px rgba(0,0,0,0.2); }
-    .btn-anim:hover { transform:scale(1.05); transition:0.3s; }
-    footer { background:#3e2723; margin-top:auto; }
-  </style>
+    <meta charset="UTF-8">
+    <title>Dashboard Admin - Kedaiku</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f4f6f9; }
+        .navbar-custom { background-color: #8B0000; } /* Tema Merah Kedaiku */
+    </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+<nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
   <div class="container">
-    <a class="navbar-brand fw-bold" href="index.php">☕ Toko Kopi Admin</a>
+    <a class="navbar-brand fw-bold" href="admin.php">☕ Admin Kedaiku</a>
     <div class="collapse navbar-collapse">
       <ul class="navbar-nav ms-auto">
-        <li class="nav-item"><a class="nav-link" href="index.php">Home</a></li>
-        <li class="nav-item"><a class="nav-link active" href="#">Tambah Produk</a></li>
-        <li class="nav-item"><a class="nav-link text-warning fw-bold" href="produk.php">← Kembali</a></li>
+        <li class="nav-item"><a class="nav-link active" href="admin.php">Pesanan</a></li>
+        <li class="nav-item"><a class="nav-link" href="kelola_produk.php">Kelola Produk</a></li>
+        <li class="nav-item"><a class="nav-link" href="tambah_produk.php">Tambah Produk</a></li>
+        <li class="nav-item"><a class="nav-link" href="tambah_admin.php">Tambah Admin</a></li>
+        <li class="nav-item"><a class="nav-link text-warning fw-bold" href="logout.php">Logout</a></li>
       </ul>
     </div>
   </div>
 </nav>
 
 <div class="container my-5">
-  <h1 class="text-center mb-4">Tambah Produk Kopi</h1>
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card card-custom p-4">
-        <form method="post" enctype="multipart/form-data">
-          <div class="mb-3">
-            <label class="form-label">Nama Produk</label>
-            <input type="text" name="nama" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Harga</label>
-            <input type="number" name="harga" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Gambar Produk</label>
-            <input type="file" name="gambar" class="form-control" required>
-          </div>
-          <button type="submit" name="simpan" class="btn btn-primary btn-anim">Simpan</button>
-        </form>
-      </div>
+    <h2 class="mb-4">Daftar Pesanan Masuk</h2>
+    <div class="card p-4 shadow-sm border-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nama</th>
+                        <th>Pembayaran</th>
+                        <th>Total Tagihan</th>
+                        <th>Tanggal</th>
+                        <th>Bukti Transfer</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $query = $koneksi->query("SELECT * FROM pesanan_header ORDER BY id DESC");
+                    if($query->num_rows > 0) {
+                        while($row = $query->fetch_assoc()){
+                            $status = $row['status'] ?? 'Menunggu Pembayaran';
+                            $badgeColor = ($status == 'Terverifikasi') ? 'bg-success' : 'bg-warning text-dark';
+                    ?>
+                    <tr>
+                        <td class="fw-bold">#<?php echo $row['id']; ?></td>
+                        <td><?php echo htmlspecialchars($row['nama']); ?></td>
+                        <td><?php echo htmlspecialchars($row['pembayaran']); ?></td>
+                        <td class="fw-bold text-danger">Rp <?php echo number_format($row['total'],0,',','.'); ?></td>
+                        <td><?php echo date('d-m-Y H:i', strtotime($row['tanggal'])); ?></td>
+                        <td>
+                            <?php if(!empty($row['bukti'])){ ?>
+                                <a href="assets/gambar/<?php echo $row['bukti']; ?>" target="_blank" class="btn btn-outline-info btn-sm fw-bold">Lihat Bukti 📄</a>
+                            <?php } else { ?>
+                                <span class="text-muted small">Tidak Ada</span>
+                            <?php } ?>
+                        </td>
+                        <td><span class="badge <?php echo $badgeColor; ?>"><?php echo $status; ?></span></td>
+                        <td>
+                            <?php if($status != 'Terverifikasi'){ ?>
+                                <a href="verifikasi_pesanan.php?id=<?php echo $row['id']; ?>" class="btn btn-success btn-sm fw-bold" onclick="return confirm('Verifikasi pembayaran pesanan #<?php echo $row['id']; ?>?');">Verifikasi ✓</a>
+                            <?php } else { ?>
+                                <button class="btn btn-secondary btn-sm fw-bold" disabled>Selesai</button>
+                            <?php } ?>
+                        </td>
+                    </tr>
+                    <?php 
+                        } 
+                    } else {
+                        echo "<tr><td colspan='8' class='text-center py-4'>Belum ada pesanan masuk.</td></tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
     </div>
-  </div>
 </div>
-
-<footer class="text-white text-center py-3">
-  <p>&copy; <?php echo date("Y"); ?> Toko Biji Kopi Admin. All rights reserved.</p>
-</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
