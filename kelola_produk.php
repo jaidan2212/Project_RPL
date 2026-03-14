@@ -26,9 +26,51 @@ if(isset($_GET['hapus'])){
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #f4f6f9; font-family: 'Poppins', sans-serif; }
-        .navbar-custom { background-color: #8B0000; } /* Tema Merah Kedaiku */
-        .foto-produk { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; }
+        body{
+            background:#cbb79c;
+            font-family:'Poppins',sans-serif;
+        }
+
+        /* Navbar */
+        .navbar-custom{
+            background:#561c24;
+        }
+
+        /* Card container */
+        .card{
+            background:#e8d8c4;
+            border-radius:12px;
+        }
+
+        /* Tabel */
+        .table{
+            background:#e8d8c4;
+        }
+
+        .table thead{
+            background:#561c24;
+            color:white;
+        }
+
+        .table tbody tr{
+            background:#f1e4d3;
+        }
+
+        .table tbody tr:hover{
+            background:#dcc8ad;
+        }
+
+        .table td, .table th{
+            border:none;
+        }
+
+        /* Foto produk */
+        .foto-produk{
+            width:60px;
+            height:60px;
+            object-fit:cover;
+            border-radius:8px;
+        }
     </style>
 </head>
 <body>
