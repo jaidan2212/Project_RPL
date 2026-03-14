@@ -1,11 +1,17 @@
 body{
-    font-family:'Poppins', sans-serif;
-    background:#c7b7a3;
+font-family:'Poppins',sans-serif;
+background:#c7b7a3;
 }
 
-/* navbar */
 .navbar-custom{
-    background:#561c24;
+background:#561c24;
+}
+
+.foto-user{
+width:32px;
+height:32px;
+border-radius:50%;
+object-fit:cover;
 }
 
 .navbar-custom .nav-link{
