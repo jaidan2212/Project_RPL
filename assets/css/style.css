@@ -8,10 +8,11 @@ background:#561c24;
 }
 
 .foto-user{
-width:32px;
-height:32px;
-border-radius:50%;
-object-fit:cover;
+width:32px !important;
+height:32px !important;
+border-radius:50% !important;
+object-fit:cover !important;
+display:inline-block;
 }
 
 .navbar-custom .nav-link{
