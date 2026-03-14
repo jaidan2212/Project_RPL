@@ -1,0 +1,52 @@
+body{
+    font-family:'Poppins', sans-serif;
+    background:#c7b7a3;
+}
+
+/* navbar */
+.navbar-custom{
+    background:#561c24;
+}
+
+.navbar-custom .nav-link{
+    color:white;
+}
+
+.navbar-custom .nav-link:hover{
+    color:#e8d8c4;
+}
+
+/* heading */
+h1,h2,h3{
+    font-family:'Playfair Display', serif;
+    color:#561c24;
+}
+
+/* card */
+.custom-card{
+    background:#e8d8c4;
+    border:none;
+    transition:0.3s;
+}
+
+.custom-card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 4px 15px rgba(0,0,0,0.2);
+}
+
+/* tombol utama */
+.btn-custom{
+    background:#6d2932;
+    color:white;
+    border:none;
+}
+
+.btn-custom:hover{
+    background:#561c24;
+}
+
+/* footer */
+footer{
+    background:#561c24;
+    color:white;
+}
