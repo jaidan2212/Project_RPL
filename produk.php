@@ -19,19 +19,26 @@ font-family:'Poppins',sans-serif;
 background:#c7b7a3;
 }
 
+.container{
+background:#e8d8c4;
+padding:40px;
+border-radius:10px;
+}
+
 h1{
 font-family:'Playfair Display',serif;
 color:#561c24;
 }
 
 .product-card{
-background:#e8d8c4;
+background:white;
 border:none;
 transition:0.3s;
+box-shadow:0 4px 10px rgba(0,0,0,0.15);
 }
 
 .product-card:hover{
-box-shadow:0 6px 18px rgba(0,0,0,0.2);
+box-shadow:0 8px 20px rgba(0,0,0,0.25);
 transform:translateY(-5px);
 }
 
