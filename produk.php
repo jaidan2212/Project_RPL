@@ -22,9 +22,8 @@ background:#c7b7a3;
 }
 
 .container{
-background:#e8d8c4;
-padding:40px;
-border-radius:10px;
+padding-top:40px;
+padding-bottom:40px;
 }
 
 h1{
@@ -33,14 +32,13 @@ color:#561c24;
 }
 
 .product-card{
-background:white;
+background:#e8d8c4;
 border:none;
 transition:0.3s;
-box-shadow:0 4px 10px rgba(0,0,0,0.15);
 }
 
 .product-card:hover{
-box-shadow:0 8px 20px rgba(0,0,0,0.25);
+box-shadow:0 6px 18px rgba(0,0,0,0.2);
 transform:translateY(-5px);
 }
 
