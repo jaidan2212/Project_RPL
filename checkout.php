@@ -90,7 +90,7 @@ margin-top:auto;
 <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
 <div class="container">
 
-<a class="navbar-brand fw-bold" href="index.php">☕ Kopiku</a>
+<a class="navbar-brand fw-bold" href="index.php">☕ Kedaiku</a>
 
 <div class="collapse navbar-collapse">
 <ul class="navbar-nav ms-auto">
