@@ -98,7 +98,7 @@ background:#561c24;
 
 <div class="card login-card">
 
-<h3 class="text-center login-title mb-4">☕ Login Kopiku</h3>
+<h3 class="text-center login-title mb-4">☕ Login Kedaiku</h3>
 
 <?php if(isset($error)) echo "<div class='alert alert-danger text-center'>$error</div>"; ?>
 
