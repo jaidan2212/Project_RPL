@@ -20,6 +20,67 @@ DROP DATABASE IF EXISTS `kopi_db`;
 CREATE DATABASE IF NOT EXISTS `kopi_db` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `kopi_db`;
 
+-- Dumping structure for table kopi_db.produk
+DROP TABLE IF EXISTS `produk`;
+CREATE TABLE IF NOT EXISTS `produk` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nama` varchar(100) DEFAULT NULL,
+  `harga` int DEFAULT NULL,
+  `gambar` varchar(200) DEFAULT NULL,
+  `stok` int NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Dumping data for table kopi_db.produk: ~3 rows (approximately)
+INSERT INTO `produk` (`id`, `nama`, `harga`, `gambar`, `stok`) VALUES
+	(1, 'Kopi Arabica', 75000, 'arabica.jpg', 49),
+	(2, 'Kopi Robusta', 60000, 'robusta.jpg', 50),
+	(3, 'Kopi Liberica', 85000, 'liberica.jpg', 50);
+
+
+-- Dumping structure for table kopi_db.pesanan_header
+DROP TABLE IF EXISTS `pesanan_header`;
+CREATE TABLE IF NOT EXISTS `pesanan_header` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nama` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `pembayaran` varchar(50) NOT NULL,
+  `tanggal` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `total` int NOT NULL,
+  `status` varchar(50) DEFAULT 'Menunggu Pembayaran',
+  `bukti` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Dumping data for table kopi_db.pesanan_header: ~25 rows (approximately)
+INSERT INTO `pesanan_header` (`id`, `nama`, `email`, `pembayaran`, `tanggal`, `total`, `status`, `bukti`) VALUES
+	(1, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-10 04:01:02', 195000, 'Menunggu Pembayaran', NULL),
+	(2, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-10 04:02:34', 195000, 'Menunggu Pembayaran', NULL),
+	(3, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-10 04:03:05', 135000, 'Menunggu Pembayaran', NULL),
+	(4, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-10 04:06:38', 220000, 'Menunggu Pembayaran', NULL),
+	(5, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-10 04:07:38', 135000, 'Menunggu Pembayaran', NULL),
+	(6, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-10 04:09:18', 135000, 'Menunggu Pembayaran', NULL),
+	(7, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-10 04:10:32', 135000, 'Menunggu Pembayaran', NULL),
+	(8, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-10 04:16:17', 135000, 'Menunggu Pembayaran', NULL),
+	(9, 'zaidan', 'zaidannabil2212@gmail.com', 'COD', '2026-03-10 04:31:44', 355000, 'Menunggu Pembayaran', NULL),
+	(10, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-11 03:02:14', 130500, 'Menunggu Pembayaran', NULL),
+	(11, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-11 03:02:37', 121500, 'Menunggu Pembayaran', NULL),
+	(12, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-11 03:02:49', 135000, 'Menunggu Pembayaran', NULL),
+	(13, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-11 03:03:56', 265500, 'Menunggu Pembayaran', NULL),
+	(14, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-11 03:06:32', 75000, 'Menunggu Pembayaran', NULL),
+	(15, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-11 03:10:45', 130500, 'Menunggu Pembayaran', NULL),
+	(16, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-11 03:13:01', 130500, 'Menunggu Pembayaran', NULL),
+	(17, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-11 07:16:51', 121500, 'Menunggu Pembayaran', NULL),
+	(18, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-11 07:21:29', 75000, 'Menunggu Pembayaran', NULL),
+	(19, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-11 07:26:17', 75000, 'Menunggu Pembayaran', NULL),
+	(20, 'zaidan', 'zaidannabil2212@gmail.com', 'COD', '2026-03-13 14:59:14', 121500, 'Menunggu Pembayaran', NULL),
+	(21, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-13 15:02:09', 121500, 'Menunggu Pembayaran', NULL),
+	(22, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-13 15:05:36', 130500, 'Menunggu Pembayaran', NULL),
+	(23, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-13 15:18:41', 121500, 'Menunggu Pembayaran', NULL),
+	(24, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-13 16:31:43', 121500, 'Terverifikasi', NULL),
+	(25, 'Dimas', 'fahdimas42@gmail.com', 'Transfer Bank', '2026-03-13 18:20:56', 75000, 'Menunggu Pembayaran', NULL),
+	(26, 'Dimas', 'fahdimas42@gmail.com', 'Transfer BCA', '2026-03-13 18:41:27', 75000, 'Terverifikasi', '1773427287_20251010_OHR.MonurikiFiji_EN-US0326449622_UHD_bing.jpg');
+
 -- Dumping structure for table kopi_db.pesanan_detail
 DROP TABLE IF EXISTS `pesanan_detail`;
 CREATE TABLE IF NOT EXISTS `pesanan_detail` (
@@ -88,65 +149,6 @@ INSERT INTO `pesanan_detail` (`id`, `id_pesanan`, `produk_id`, `jumlah`, `harga`
 	(48, 25, 1, 1, 75000, 75000),
 	(49, 26, 1, 1, 75000, 75000);
 
--- Dumping structure for table kopi_db.pesanan_header
-DROP TABLE IF EXISTS `pesanan_header`;
-CREATE TABLE IF NOT EXISTS `pesanan_header` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `nama` varchar(100) NOT NULL,
-  `email` varchar(100) NOT NULL,
-  `pembayaran` varchar(50) NOT NULL,
-  `tanggal` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `total` int NOT NULL,
-  `status` varchar(50) DEFAULT 'Menunggu Pembayaran',
-  `bukti` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- Dumping data for table kopi_db.pesanan_header: ~25 rows (approximately)
-INSERT INTO `pesanan_header` (`id`, `nama`, `email`, `pembayaran`, `tanggal`, `total`, `status`, `bukti`) VALUES
-	(1, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-10 04:01:02', 195000, 'Menunggu Pembayaran', NULL),
-	(2, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-10 04:02:34', 195000, 'Menunggu Pembayaran', NULL),
-	(3, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-10 04:03:05', 135000, 'Menunggu Pembayaran', NULL),
-	(4, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-10 04:06:38', 220000, 'Menunggu Pembayaran', NULL),
-	(5, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-10 04:07:38', 135000, 'Menunggu Pembayaran', NULL),
-	(6, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-10 04:09:18', 135000, 'Menunggu Pembayaran', NULL),
-	(7, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-10 04:10:32', 135000, 'Menunggu Pembayaran', NULL),
-	(8, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-10 04:16:17', 135000, 'Menunggu Pembayaran', NULL),
-	(9, 'zaidan', 'zaidannabil2212@gmail.com', 'COD', '2026-03-10 04:31:44', 355000, 'Menunggu Pembayaran', NULL),
-	(10, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-11 03:02:14', 130500, 'Menunggu Pembayaran', NULL),
-	(11, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-11 03:02:37', 121500, 'Menunggu Pembayaran', NULL),
-	(12, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-11 03:02:49', 135000, 'Menunggu Pembayaran', NULL),
-	(13, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-11 03:03:56', 265500, 'Menunggu Pembayaran', NULL),
-	(14, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-11 03:06:32', 75000, 'Menunggu Pembayaran', NULL),
-	(15, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-11 03:10:45', 130500, 'Menunggu Pembayaran', NULL),
-	(16, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-11 03:13:01', 130500, 'Menunggu Pembayaran', NULL),
-	(17, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-11 07:16:51', 121500, 'Menunggu Pembayaran', NULL),
-	(18, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-11 07:21:29', 75000, 'Menunggu Pembayaran', NULL),
-	(19, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-11 07:26:17', 75000, 'Menunggu Pembayaran', NULL),
-	(20, 'zaidan', 'zaidannabil2212@gmail.com', 'COD', '2026-03-13 14:59:14', 121500, 'Menunggu Pembayaran', NULL),
-	(21, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-13 15:02:09', 121500, 'Menunggu Pembayaran', NULL),
-	(22, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-13 15:05:36', 130500, 'Menunggu Pembayaran', NULL),
-	(23, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-13 15:18:41', 121500, 'Menunggu Pembayaran', NULL),
-	(24, 'zaidan', 'zaidannabil2212@gmail.com', 'Transfer Bank', '2026-03-13 16:31:43', 121500, 'Terverifikasi', NULL),
-	(25, 'Dimas', 'fahdimas42@gmail.com', 'Transfer Bank', '2026-03-13 18:20:56', 75000, 'Menunggu Pembayaran', NULL),
-	(26, 'Dimas', 'fahdimas42@gmail.com', 'Transfer BCA', '2026-03-13 18:41:27', 75000, 'Terverifikasi', '1773427287_20251010_OHR.MonurikiFiji_EN-US0326449622_UHD_bing.jpg');
-
--- Dumping structure for table kopi_db.produk
-DROP TABLE IF EXISTS `produk`;
-CREATE TABLE IF NOT EXISTS `produk` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `nama` varchar(100) DEFAULT NULL,
-  `harga` int DEFAULT NULL,
-  `gambar` varchar(200) DEFAULT NULL,
-  `stok` int NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- Dumping data for table kopi_db.produk: ~3 rows (approximately)
-INSERT INTO `produk` (`id`, `nama`, `harga`, `gambar`, `stok`) VALUES
-	(1, 'Kopi Arabica', 75000, 'arabica.jpg', 49),
-	(2, 'Kopi Robusta', 60000, 'robusta.jpg', 50),
-	(3, 'Kopi Liberica', 85000, 'liberica.jpg', 50);
 
 -- Dumping structure for table kopi_db.users
 DROP TABLE IF EXISTS `users`;
