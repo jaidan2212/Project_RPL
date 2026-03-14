@@ -41,9 +41,27 @@ border:none;
 border-radius:10px;
 }
 
+.table{
+background:#e8d8c4;
+border-radius:10px;
+overflow:hidden;
+}
+
 .table thead{
 background:#561c24;
 color:white;
+}
+
+.table tbody tr{
+background:#f1e4d3;
+}
+
+.table tbody tr:hover{
+background:#dcc8ad;
+}
+
+.table td, .table th{
+border:none;
 }
 
 .btn-success{
