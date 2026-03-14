@@ -160,7 +160,7 @@ include 'koneksi.php';
           <h5 class="card-title fw-bold"><?php echo $row['nama']; ?></h5>
           <p class="card-text text-danger fw-bold">Rp <?php echo number_format($row['harga'],0,',','.'); ?></p>
           <?php if(isset($_SESSION['username'])){ ?>
-            <a href="checkout.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger btn-sm w-100 btn-anim">Pesan</a>
+            <a href="produk.php?id=<?php echo $row['id']; ?>" class="btn btn-outline-danger btn-sm w-100 btn-anim">Pesan</a>
           <?php } else { ?>
             <a href="login.php" class="btn btn-warning btn-sm w-100 btn-anim">Login untuk Pesan</a>
           <?php } ?>

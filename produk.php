@@ -11,35 +11,49 @@ include 'koneksi.php';
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #f5f0e1, #e0c097);
-        }
-        h1 { font-family: 'Playfair Display', serif; }
-        .product-card {
-            background-color: #fff8f0;
-            border: none;
-            transition: 0.3s;
-        }
-        .product-card:hover {
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transform: translateY(-5px);
-        }
-        .big-check {
-            transform: scale(1.5); 
-            margin-right: 10px;
-        }
-        .qty-input {
-            width: 80px;
-            text-align: center;
-            font-weight: bold;
-        }
-        footer { background: #3e2723; }
-        .foto-user {
-            width:30px;
-            height:30px;
-            border-radius:50%;
-            object-fit:cover;
-        }
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #ff4d4d, #ff9999); 
+}
+h1 { 
+    font-family: 'Playfair Display', serif; 
+    color: #b71c1c; 
+}
+.product-card {
+    background-color: #fff5f5; 
+    border: none;
+    transition: 0.3s;
+}
+.product-card:hover {
+    box-shadow: 0 4px 15px rgba(183,28,28,0.4); 
+    transform: translateY(-5px);
+}
+.big-check {
+    transform: scale(1.5); 
+    margin-right: 10px;
+    color: #d32f2f; 
+}
+.qty-input {
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    border: 2px solid #e53935; 
+}
+footer { 
+    background: #8b0000; 
+    color: #fff;
+}
+.foto-user {
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    object-fit:cover;
+    border: 2px solid #c62828; 
+}
+    .promo-section {
+  background-color: #fb8b46;
+
+
+}
     </style>
 </head>
 <body>
@@ -118,11 +132,10 @@ include 'koneksi.php';
   </form>
 </div>
 
-<div class="bg-warning py-5 text-center">
+<div class="promo-section py-5 text-center">
   <h2 class="mb-3">Promo Spesial!</h2>
   <p class="lead fw-bold">Diskon 20% untuk pembelian pertama 🎉</p>
   <p>Gratis ongkir untuk wilayah Jawa Timur</p>
-  <a href="produk.php" class="btn btn-dark btn-lg">Belanja Sekarang</a>
 </div>
 
 <footer class="text-white text-center py-3">
