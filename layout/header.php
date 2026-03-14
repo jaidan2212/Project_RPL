@@ -1,23 +1,8 @@
 <?php
-if(session_status() === PHP_SESSION_NONE){
+if(session_status() == PHP_SESSION_NONE){
     session_start();
 }
 ?>
-
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<title>Toko Biji Kopi</title>
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-
-<link rel="stylesheet" href="assets/css/style.css">
-
-</head>
-<body>
 
 <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
 <div class="container">
@@ -42,26 +27,15 @@ if(session_status() === PHP_SESSION_NONE){
 
 <?php if(isset($_SESSION['username'])){ ?>
 
-<?php if(isset($_SESSION['role']) && $_SESSION['role']=="admin"){ ?>
-<li class="nav-item">
-<a class="nav-link text-warning fw-bold" href="admin.php">⚙️ Admin</a>
-</li>
-<?php } ?>
+<li class="nav-item d-flex align-items-center">
 
-<li class="nav-item d-flex align-items-center ms-3">
-
-<?php
+<?php 
 $fotoPath="assets/foto/".$_SESSION['foto'];
 
-if(!empty($_SESSION['foto']) && file_exists($fotoPath)){
-?>
-
+if(!empty($_SESSION['foto']) && file_exists($fotoPath)){ ?>
 <img src="<?php echo $fotoPath ?>" class="foto-user me-2">
-
 <?php } else { ?>
-
 <img src="assets/foto/default.png" class="foto-user me-2">
-
 <?php } ?>
 
 <span class="nav-link">Hai, <?php echo $_SESSION['username']; ?></span>
