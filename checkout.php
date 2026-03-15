@@ -135,7 +135,7 @@ Tidak ada produk dipilih. Silakan kembali ke halaman produk.
 </div>
 
 
-<!-- BANK -->
+<!-- transfer bank -->
 
 <div id="bank_section" style="display:none;" class="mt-3">
 
