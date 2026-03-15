@@ -34,30 +34,141 @@ foreach($produkDipilih as $id){
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 
 body{
-font-family:'Poppins',sans-serif;
-background:linear-gradient(135deg,#f5f0e1,#e0c097);
-min-height:100vh;
-display:flex;
-flex-direction:column;
+    font-family:'Poppins',sans-serif;
+    background:linear-gradient(135deg,#f7efe5,#e6cfa7);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
 }
 
+/* Judul */
+h1{
+    font-weight:600;
+    color:#4e342e;
+}
+
+/* Card utama */
 .checkout-card{
-background:#fff8f0;
-border:none;
-box-shadow:0 4px 15px rgba(0,0,0,0.2);
+    background:#fffdf9;
+    border:none;
+    border-radius:18px;
+    box-shadow:0 15px 40px rgba(0,0,0,0.15);
 }
 
-footer{
-background:#3e2723;
-margin-top:auto;
+/* List produk */
+.list-group-item{
+    border:none;
+    border-bottom:1px dashed #ddd;
+    background:transparent;
+    font-weight:500;
+    padding:12px 0;
 }
 
+/* Total harga */
+h5{
+    margin-top:15px;
+    font-weight:600;
+    color:#6d4c41;
+}
+
+/* Form */
+.form-label{
+    font-weight:500;
+    color:#5d4037;
+}
+
+.form-control,
+.form-select{
+    border-radius:12px;
+    padding:10px 14px;
+    border:1px solid #d7ccc8;
+}
+
+.form-control:focus,
+.form-select:focus{
+    border-color:#8d6e63;
+    box-shadow:0 0 0 0.15rem rgba(141,110,99,0.25);
+}
+
+/* Bank option */
 .bank-option{
-cursor:pointer;
+    border-radius:14px;
+    border:1px solid #d7ccc8;
+    background:#fff;
+    font-weight:500;
+    transition:all .3s ease;
 }
 
+.bank-option:hover{
+    background:#8d6e63;
+    color:white;
+    transform:translateY(-3px);
+    box-shadow:0 8px 20px rgba(0,0,0,.2);
+}
+
+/* Detail rekening */
+#detail_rekening{
+    border-radius:14px;
+    border:none;
+    background:linear-gradient(135deg,#e3f2fd,#bbdefb);
+}
+
+#detail_rekening h5{
+    font-weight:600;
+    color:#0d47a1;
+}
+
+/* QRIS */
+#ewallet_section{
+    border-radius:14px;
+    border:none;
+    background:linear-gradient(135deg,#e8f5e9,#c8e6c9);
+    text-align:center;
+}
+
+#ewallet_section img{
+    border-radius:12px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.2);
+}
+
+/* Tombol */
+.btn-success{
+    background:linear-gradient(135deg,#6d4c41,#4e342e);
+    border:none;
+    border-radius:14px;
+    font-weight:600;
+    padding:12px;
+    transition:.3s;
+}
+
+.btn-success:hover{
+    background:linear-gradient(135deg,#5d4037,#3e2723);
+    transform:translateY(-2px);
+    box-shadow:0 8px 25px rgba(0,0,0,.25);
+}
+
+/* Tombol salin */
+.btn-secondary{
+    border-radius:10px;
+    font-size:13px;
+    padding:4px 10px;
+}
+
+/* Alert */
+.alert{
+    border-radius:14px;
+    font-weight:500;
+}
+
+/* Responsive */
+@media(max-width:768px){
+    .checkout-card{
+        padding:25px 20px;
+    }
+}
 </style>
 </head>
 
@@ -135,15 +246,7 @@ Tidak ada produk dipilih. Silakan kembali ke halaman produk.
 </div>
 
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<!-- transfer bank -->
-=======
-<!-- BANK -->
->>>>>>> ac962ed (update payment terbaru)
-=======
-<!-- transfer bank -->
->>>>>>> 574138b (update payment sementara)
+
 
 <div id="bank_section" style="display:none;" class="mt-3">
 
