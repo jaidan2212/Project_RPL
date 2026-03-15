@@ -136,10 +136,14 @@ Tidak ada produk dipilih. Silakan kembali ke halaman produk.
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 <!-- transfer bank -->
 =======
 <!-- BANK -->
 >>>>>>> ac962ed (update payment terbaru)
+=======
+<!-- transfer bank -->
+>>>>>>> 574138b (update payment sementara)
 
 <div id="bank_section" style="display:none;" class="mt-3">
 
