@@ -3,241 +3,240 @@ session_start();
 include 'koneksi.php';
 
 // Proteksi: hanya admin boleh masuk
-if(!isset($_SESSION['username']) || $_SESSION['role'] != 'admin'){
+if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
     header("Location: login.php");
     exit;
 }
 ?>
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
-<meta charset="UTF-8">
-<title>Dashboard Admin - Kedaiku</title>
+    <meta charset="UTF-8">
+    <title>Dashboard Admin - Kedaiku</title>
 
-<link rel="stylesheet" href="assets/css/style.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
-<style>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #c7b7a3;
+        }
 
-body{
-font-family:'Poppins',sans-serif;
-background:#c7b7a3;
-}
+        .navbar-custom {
+            background: #561c24;
+        }
 
-.navbar-custom{
-background:#561c24;
-}
+        .admin-title {
+            color: #561c24;
+            font-weight: 600;
+        }
 
-.admin-title{
-color:#561c24;
-font-weight:600;
-}
+        .card-admin {
+            background: #e8d8c4;
+            border: none;
+            border-radius: 10px;
+        }
 
-.card-admin{
-background:#e8d8c4;
-border:none;
-border-radius:10px;
-}
+        .table {
+            background: #e8d8c4;
+            border-radius: 10px;
+            overflow: hidden;
+        }
 
-.table{
-background:#e8d8c4;
-border-radius:10px;
-overflow:hidden;
-}
+        .table thead {
+            background: #561c24;
+            color: white;
+        }
 
-.table thead{
-background:#561c24;
-color:white;
-}
+        .table tbody tr {
+            background: #f1e4d3;
+        }
 
-.table tbody tr{
-background:#f1e4d3;
-}
+        .table tbody tr:hover {
+            background: #dcc8ad;
+        }
 
-.table tbody tr:hover{
-background:#dcc8ad;
-}
+        .table td,
+        .table th {
+            border: none;
+        }
 
-.table td, .table th{
-border:none;
-}
+        .btn-success {
+            background: #561c24;
+            border: none;
+        }
 
-.btn-success{
-background:#561c24;
-border:none;
-}
-
-.btn-success:hover{
-background:#6d2932;
-}
-
-</style>
+        .btn-success:hover {
+            background: #6d2932;
+        }
+    </style>
 </head>
 
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
-<div class="container">
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
+        <div class="container">
 
-<a class="navbar-brand fw-bold" href="admin.php">☕ Admin Kedaiku</a>
+            <a class="navbar-brand fw-bold" href="admin.php">☕ Admin Kedaiku</a>
 
-<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-<span class="navbar-toggler-icon"></span>
-</button>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-<div class="collapse navbar-collapse" id="navbarNav">
+            <div class="collapse navbar-collapse" id="navbarNav">
 
-<ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto">
 
-<li class="nav-item">
-<a class="nav-link active" href="admin.php">Pesanan</a>
-</li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="admin.php">Pesanan</a>
+                    </li>
 
-<li class="nav-item">
-<a class="nav-link" href="kelola_produk.php">Kelola Produk</a>
-</li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="kelola_produk.php">Kelola Produk</a>
+                    </li>
 
-<li class="nav-item">
-<a class="nav-link" href="tambah_produk.php">Tambah Produk</a>
-</li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="tambah_produk.php">Tambah Produk</a>
+                    </li>
 
-<li class="nav-item">
-<a class="nav-link" href="tambah_admin.php">Tambah Admin</a>
-</li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="tambah_admin.php">Tambah Admin</a>
+                    </li>
 
-<li class="nav-item">
-<a class="nav-link text-warning fw-bold" href="logout.php">Logout</a>
-</li>
+                    <li class="nav-item">
+                        <a class="nav-link text-warning fw-bold" href="logout.php">Logout</a>
+                    </li>
 
-</ul>
+                </ul>
 
-</div>
-</div>
-</nav>
+            </div>
+        </div>
+    </nav>
 
-<div class="container my-5">
+    <div class="container my-5">
 
-<h2 class="mb-4 admin-title">Daftar Pesanan Masuk</h2>
+        <h2 class="mb-4 admin-title">Daftar Pesanan Masuk</h2>
 
-<div class="card card-admin p-4 shadow-sm">
+        <div class="card card-admin p-4 shadow-sm">
 
-<div class="table-responsive">
+            <div class="table-responsive">
 
-<table class="table table-hover align-middle">
+                <table class="table table-hover align-middle">
 
-<thead>
-<tr>
-<th>ID</th>
-<th>Nama</th>
-<th>Pembayaran</th>
-<th>Total Tagihan</th>
-<th>Tanggal</th>
-<th>Bukti Transfer</th>
-<th>Status</th>
-<th>Aksi</th>
-</tr>
-</thead>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nama</th>
+                            <th>Pembayaran</th>
+                            <th>Total Tagihan</th>
+                            <th>Tanggal</th>
+                            <th>Bukti Transfer</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
 
-<tbody>
+                    <tbody>
 
-<?php
-$query = $koneksi->query("SELECT * FROM pesanan_header ORDER BY id DESC");
+                        <?php
+                        $query = $koneksi->query("SELECT * FROM pesanan_header ORDER BY id DESC");
 
-if($query->num_rows > 0) {
+                        if ($query->num_rows > 0) {
 
-while($row = $query->fetch_assoc()){
+                            while ($row = $query->fetch_assoc()) {
 
-$status = $row['status'] ?? 'Menunggu Pembayaran';
-$badgeColor = ($status == 'Terverifikasi') ? 'bg-success' : 'bg-warning text-dark';
-?>
+                                $status = $row['status'] ?? 'Menunggu Pembayaran';
+                                $badgeColor = ($status == 'Terverifikasi') ? 'bg-success' : 'bg-warning text-dark';
+                        ?>
 
-<tr>
+                                <tr>
 
-<td class="fw-bold">#<?php echo $row['id']; ?></td>
+                                    <td class="fw-bold">#<?php echo $row['id']; ?></td>
 
-<td><?php echo htmlspecialchars($row['nama']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['nama']); ?></td>
 
-<td><?php echo htmlspecialchars($row['pembayaran']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['pembayaran']); ?></td>
 
-<td class="fw-bold text-danger">
-Rp <?php echo number_format($row['total'],0,',','.'); ?>
-</td>
+                                    <td class="fw-bold text-danger">
+                                        Rp <?php echo number_format($row['total'], 0, ',', '.'); ?>
+                                    </td>
 
-<td>
-<?php echo date('d-m-Y H:i', strtotime($row['tanggal'])); ?>
-</td>
+                                    <td>
+                                        <?php echo date('d-m-Y H:i', strtotime($row['tanggal'])); ?>
+                                    </td>
 
-<td>
+                                    <td>
 
-<?php if(!empty($row['bukti'])){ ?>
+                                        <?php if (!empty($row['bukti'])) { ?>
 
-<a href="assets/gambar/<?php echo $row['bukti']; ?>" 
-target="_blank" 
-class="btn btn-outline-info btn-sm fw-bold">
+                                            <a href="assets/gambar/<?php echo $row['bukti']; ?>"
+                                                target="_blank"
+                                                class="btn btn-outline-info btn-sm fw-bold">
 
-Lihat Bukti 📄
+                                                Lihat Bukti 📄
 
-</a>
+                                            </a>
 
-<?php } else { ?>
+                                        <?php } else { ?>
 
-<span class="text-muted small">Tidak Ada</span>
+                                            <span class="text-muted small">Tidak Ada</span>
 
-<?php } ?>
+                                        <?php } ?>
 
-</td>
+                                    </td>
 
-<td>
-<span class="badge <?php echo $badgeColor; ?>">
-<?php echo $status; ?>
-</span>
-</td>
+                                    <td>
+                                        <span class="badge <?php echo $badgeColor; ?>">
+                                            <?php echo $status; ?>
+                                        </span>
+                                    </td>
 
-<td>
+                                    <td>
 
-<?php if($status != 'Terverifikasi'){ ?>
+                                        <?php if ($status != 'Terverifikasi') { ?>
 
-<a href="verifikasi_pesanan.php?id=<?php echo $row['id']; ?>" 
-class="btn btn-success btn-sm fw-bold"
-onclick="return confirm('Verifikasi pembayaran pesanan #<?php echo $row['id']; ?>?');">
+                                            <a href="verifikasi_pesanan.php?id=<?php echo $row['id']; ?>"
+                                                class="btn btn-success btn-sm fw-bold"
+                                                onclick="return confirm('Verifikasi pembayaran pesanan #<?php echo $row['id']; ?>?');">
 
-Verifikasi ✓
+                                                Verifikasi ✓
 
-</a>
+                                            </a>
 
-<?php } else { ?>
+                                        <?php } else { ?>
 
-<button class="btn btn-secondary btn-sm fw-bold" disabled>
-Selesai
-</button>
+                                            <button class="btn btn-secondary btn-sm fw-bold" disabled>
+                                                Selesai
+                                            </button>
 
-<?php } ?>
+                                        <?php } ?>
 
-</td>
+                                    </td>
 
-</tr>
+                                </tr>
 
-<?php 
-}
+                        <?php
+                            }
+                        } else {
 
-} else {
+                            echo "<tr><td colspan='8' class='text-center py-4'>Belum ada pesanan masuk.</td></tr>";
+                        }
+                        ?>
 
-echo "<tr><td colspan='8' class='text-center py-4'>Belum ada pesanan masuk.</td></tr>";
+                    </tbody>
 
-}
-?>
+                </table>
 
-</tbody>
+            </div>
+        </div>
+    </div>
 
-</table>
-
-</div>
-</div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
+
 </html>
