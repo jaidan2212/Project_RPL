@@ -96,7 +96,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="kelola_produk.php">Kelola Produk</a>
+                        <a class="nav-link" href="kelola_produk.php">Daftar Produk</a>
                     </li>
 
                     <li class="nav-item">
