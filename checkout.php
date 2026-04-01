@@ -37,7 +37,7 @@ foreach ($produkDipilih as $id) {
 
 <head>
     <meta charset="UTF-8">
-    <title>Checkout - Kedaiku</title>
+    <title>Checkout - Kedaiku Biji Kopi</title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
@@ -143,11 +143,11 @@ foreach ($produkDipilih as $id) {
         <h1 class="text-center mb-4">Proses Checkout</h1>
 
         <?php if (empty($daftarProduk)) { ?>
-            <div class="alert alert-danger text-center shadow-sm border-0 py-4 rounded-3">
+            <div class="alert alert-danger text-center shadow-sm border-0 py-5 rounded-4">
                 <i class="fa-solid fa-cart-arrow-down fs-1 mb-3 text-danger"></i><br>
-                <h5 class="fw-bold text-danger">Keranjang Kosong</h5>
-                <p>Tidak ada produk yang dipilih. Silakan kembali ke halaman produk.</p>
-                <a href="produk.php" class="btn btn-outline-danger px-4 rounded-pill">Belanja Sekarang</a>
+                <h5 class="fw-bold text-danger">Keranjang Anda Kosong</h5>
+                <p>Sepertinya Anda belum memilih produk kopi kami. Yuk, pilih kopi favoritmu dulu!</p>
+                <a href="produk.php" class="btn btn-main px-5 rounded-pill mt-3">Kembali ke Katalog</a>
             </div>
         <?php } else { ?>
 
@@ -155,7 +155,7 @@ foreach ($produkDipilih as $id) {
                 <div class="col-lg-8">
                     <div class="card checkout-card p-4 p-md-5">
 
-                        <h4 class="mb-4 border-bottom pb-2"><i class="fa-solid fa-basket-shopping me-2"></i> Ringkasan Pesanan</h4>
+                        <h4 class="mb-4 border-bottom pb-2 text-uppercase"><i class="fa-solid fa-receipt me-2"></i> Ringkasan Pesanan</h4>
 
                         <ul class="list-group mb-4">
                             <?php foreach ($daftarProduk as $p) { ?>
@@ -167,13 +167,24 @@ foreach ($produkDipilih as $id) {
                                     <span class="fw-bold text-velvet">Rp <?php echo number_format($p['subtotal'], 0, ',', '.'); ?></span>
                                 </li>
                             <?php } ?>
-                            <li class="list-group-item d-flex justify-content-between align-items-center px-0 mt-2 border-top border-dark border-2">
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0 mt-2 border-top border-dark border-2 pt-3">
                                 <h5 class="mb-0 text-dark">Total Pembayaran</h5>
-                                <h4 class="mb-0 text-velvet">Rp <?php echo number_format($total, 0, ',', '.'); ?></h4>
+                                <h4 class="mb-0 text-velvet fw-bold">Rp <?php echo number_format($total, 0, ',', '.'); ?></h4>
                             </li>
                         </ul>
 
-                        <h4 class="mb-4 mt-5 border-bottom pb-2"><i class="fa-solid fa-truck-fast me-2"></i> Detail Pengiriman & Pembayaran</h4>
+                        <h4 class="mb-4 mt-5 border-bottom pb-2 text-uppercase"><i class="fa-solid fa-truck-ramp-box me-2"></i> Konfirmasi Pengambilan</h4>
+
+                        <div class="alert border-0 shadow-sm mb-4" style="background-color: #fdf5e6; color: #561c24; border-radius: 10px;">
+                            <div class="d-flex">
+                                <i class="fa-solid fa-location-dot fs-3 me-3 mt-1 text-danger"></i>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Lokasi Pengambilan Toko:</h6>
+                                    <p class="mb-1"><strong>Kedaiku Coffee Shop</strong><br>Jl. Bulurejo Jalan 12 Jombang, Jawa Timur.</p>
+                                    <small class="text-muted d-block mt-2"><em>*Tunjukkan Bukti Nota Digital (PDF) kepada Barista kami saat mengambil pesanan.</em></small>
+                                </div>
+                            </div>
+                        </div>
 
                         <form method="post" action="proses_pesanan.php" enctype="multipart/form-data">
 
@@ -184,36 +195,37 @@ foreach ($produkDipilih as $id) {
                             
                             <input type="hidden" name="total_harga" value="<?php echo $total; ?>">
 
-                            <div class="mb-3">
-                                <label class="form-label">Nama Penerima</label>
-                                <input type="text" name="nama" class="form-control" value="<?php echo $_SESSION['username']; ?>" required>
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="form-label">Email Aktif</label>
-                                <input type="email" name="email" class="form-control" placeholder="email@gmail.com" required>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Nama Pengambil</label>
+                                    <input type="text" name="nama" class="form-control" value="<?php echo $_SESSION['username']; ?>" required>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label">Email Konfirmasi</label>
+                                    <input type="email" name="email" class="form-control" placeholder="email@gmail.com" required>
+                                </div>
                             </div>
 
                             <div class="mb-4">
                                 <label class="form-label">Pilih Metode Pembayaran</label>
                                 <select name="pembayaran" id="metode_pembayaran" class="form-select fw-bold" onchange="tampilMetode()" required>
-                                    <option value="">-- Silakan Pilih --</option>
+                                    <option value="">-- Silakan Pilih Metode --</option>
                                     <option value="Transfer Bank">🏦 Transfer Bank</option>
                                     <option value="QRIS">📱 E-Wallet (QRIS)</option> 
                                 </select>
                             </div>
 
                             <div id="bank_section" style="display:none;" class="mb-4">
-                                <label class="form-label">Pilih Bank Tujuan</label>
-                                <div class="row">
+                                <label class="form-label">Pilih Bank Tujuan Transfer</label>
+                                <div class="row g-2">
                                     <div class="col-4">
-                                        <div class="card p-3 text-center bank-option" onclick="pilihBank('BCA')">BCA</div>
+                                        <div id="bank_bca" class="card p-3 text-center bank-option" onclick="pilihBank('BCA')">BCA</div>
                                     </div>
                                     <div class="col-4">
-                                        <div class="card p-3 text-center bank-option" onclick="pilihBank('BRI')">BRI</div>
+                                        <div id="bank_bri" class="card p-3 text-center bank-option" onclick="pilihBank('BRI')">BRI</div>
                                     </div>
                                     <div class="col-4">
-                                        <div class="card p-3 text-center bank-option" onclick="pilihBank('Mandiri')">Mandiri</div>
+                                        <div id="bank_mandiri" class="card p-3 text-center bank-option" onclick="pilihBank('Mandiri')">Mandiri</div>
                                     </div>
                                 </div>
                             </div>
@@ -222,9 +234,9 @@ foreach ($produkDipilih as $id) {
                                 <div class="d-flex align-items-center mb-3">
                                     <i class="fa-solid fa-building-columns fs-2 text-info me-3"></i>
                                     <div>
-                                        <h5 id="nama_bank" class="mb-0 text-info"></h5>
+                                        <h5 id="nama_bank" class="mb-0 text-info fw-bold"></h5>
                                         <h4 class="fw-bold text-dark mb-0" id="no_rek"></h4>
-                                        <small class="text-muted">a.n Kedaiku Biji Kopi</small>
+                                        <small class="text-muted">Atas Nama: <strong>Kedaiku Biji Kopi</strong></small>
                                     </div>
                                 </div>
                                 <hr>
@@ -243,8 +255,8 @@ foreach ($produkDipilih as $id) {
                                 </div>
                             </div>
 
-                            <button type="submit" class="btn btn-main w-100 btn-lg shadow mt-3">
-                                <i class="fa-solid fa-check-circle me-2"></i> Konfirmasi Pesanan
+                            <button type="submit" class="btn btn-main w-100 btn-lg shadow mt-3 text-uppercase">
+                                <i class="fa-solid fa-circle-check me-2"></i> Konfirmasi & Selesaikan Pesanan
                             </button>
 
                         </form>
@@ -254,9 +266,7 @@ foreach ($produkDipilih as $id) {
         <?php } ?>
     </div>
 
-    <footer class="text-white text-center py-3 mt-auto" style="background: #561c24;">
-        <p class="mb-0">&copy; <?php echo date("Y"); ?> Toko Biji Kopi. All rights reserved.</p>
-    </footer>
+    <?php include 'layout/footer.php'; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -268,14 +278,13 @@ foreach ($produkDipilih as $id) {
             document.getElementById("detail_rekening").style.display = "none";
             document.getElementById("ewallet_section").style.display = "none";
             
-            // Disable input file agar PHP tidak bingung pas ngirim data
             document.getElementById("bukti_transfer").disabled = true;
             document.getElementById("bukti_qris").disabled = true;
 
             if (metode == "Transfer Bank") {
                 document.getElementById("bank_section").style.display = "block";
                 document.getElementById("bukti_transfer").disabled = false;
-            } else if (metode == "QRIS") { // Tadi namanya E-Wallet, sekarang disamakan dengan value baru
+            } else if (metode == "QRIS") { 
                 document.getElementById("ewallet_section").style.display = "block";
                 document.getElementById("bukti_qris").disabled = false;
             }
@@ -284,16 +293,25 @@ foreach ($produkDipilih as $id) {
         function pilihBank(bank) {
             document.getElementById("detail_rekening").style.display = "block";
             document.getElementById("bukti_transfer").disabled = false;
+            
+            // Hapus class active dari semua bank
+            var options = document.getElementsByClassName("bank-option");
+            for (var i = 0; i < options.length; i++) {
+                options[i].classList.remove("active");
+            }
 
             if (bank == "BCA") {
                 document.getElementById("nama_bank").innerText = "Bank BCA";
                 document.getElementById("no_rek").innerText = "1234 5678 90";
+                document.getElementById("bank_bca").classList.add("active");
             } else if (bank == "BRI") {
                 document.getElementById("nama_bank").innerText = "Bank BRI";
                 document.getElementById("no_rek").innerText = "9876 5432 10";
+                document.getElementById("bank_bri").classList.add("active");
             } else if (bank == "Mandiri") {
                 document.getElementById("nama_bank").innerText = "Bank Mandiri";
                 document.getElementById("no_rek").innerText = "1122 3344 55";
+                document.getElementById("bank_mandiri").classList.add("active");
             }
         }
 
@@ -303,10 +321,10 @@ foreach ($produkDipilih as $id) {
             var buktiQris = document.getElementById("bukti_qris").files.length;
 
             if (metode == "Transfer Bank" && buktiTransfer == 0) {
-                alert("Harap upload bukti transfer Bank terlebih dahulu!");
+                alert("Mohon maaf, Anda harus mengunggah bukti transfer Bank terlebih dahulu!");
                 e.preventDefault();
             } else if (metode == "QRIS" && buktiQris == 0) {
-                alert("Harap upload bukti pembayaran QRIS terlebih dahulu!");
+                alert("Mohon maaf, Anda harus mengunggah bukti pembayaran QRIS terlebih dahulu!");
                 e.preventDefault();
             }
         });

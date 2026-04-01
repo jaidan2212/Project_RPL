@@ -2,123 +2,175 @@
 session_start();
 include 'koneksi.php';
 
-$produkDipilih = isset($_POST['produk_id']) ? $_POST['produk_id'] : [];
-$jumlahDipilih = isset($_POST['jumlah']) ? $_POST['jumlah'] : [];
-$nama = $_POST['nama'];
-$email = $_POST['email'];
-$pembayaran = $_POST['pembayaran'];
+// Pastikan ada data yang dikirim
+if (!isset($_POST['produk_id']) || !isset($_POST['nama'])) {
+    header("Location: produk.php");
+    exit();
+}
+
+$produkDipilih = $_POST['produk_id'];
+$jumlahDipilih = $_POST['jumlah'];
+$nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
+$email = mysqli_real_escape_string($koneksi, $_POST['email']);
+$pembayaran = mysqli_real_escape_string($koneksi, $_POST['pembayaran']);
 
 $total = 0;
 
-// Hitung Total
+// 1. Hitung Total Harga
 foreach ($produkDipilih as $id) {
-  $produk = $koneksi->query("SELECT * FROM produk WHERE id='$id'")->fetch_assoc();
-  if ($produk) {
-    $qty = isset($jumlahDipilih[$id]) ? (int)$jumlahDipilih[$id] : 1;
-    $total += ($produk['harga'] * $qty);
-  }
+    $produk = $koneksi->query("SELECT * FROM produk WHERE id='$id'")->fetch_assoc();
+    if ($produk) {
+        $qty = isset($jumlahDipilih[$id]) ? (int)$jumlahDipilih[$id] : 1;
+        $total += ($produk['harga'] * $qty);
+    }
 }
 
-// Proses Upload Bukti Pembayaran
+// 2. Proses Upload Bukti (Cek Transfer Bank atau QRIS)
 $buktiName = "";
-if (isset($_FILES['bukti']) && $_FILES['bukti']['error'] == 0) {
-  $uploadDir = "assets/gambar/";
-  if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+$fileSource = null;
 
-  $buktiName = time() . "_" . preg_replace("/\s+/", "_", $_FILES['bukti']['name']);
-  move_uploaded_file($_FILES['bukti']['tmp_name'], $uploadDir . $buktiName);
+if (isset($_FILES['bukti_transfer']) && $_FILES['bukti_transfer']['error'] == 0) {
+    $fileSource = $_FILES['bukti_transfer'];
+} elseif (isset($_FILES['bukti_qris']) && $_FILES['bukti_qris']['error'] == 0) {
+    $fileSource = $_FILES['bukti_qris'];
 }
 
-// Simpan Header Pesanan & Nama File Bukti
-$sql = "INSERT INTO pesanan_header (nama,email,pembayaran,tanggal,total, status, bukti) 
-        VALUES ('$nama','$email','$pembayaran',NOW(),'$total', 'Menunggu Pembayaran', '$buktiName')";
+if ($fileSource) {
+    $uploadDir = "assets/gambar/";
+    if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+
+    $extension = pathinfo($fileSource['name'], PATHINFO_EXTENSION);
+    $buktiName = "BUKTI_" . time() . "_" . uniqid() . "." . $extension;
+    move_uploaded_file($fileSource['tmp_name'], $uploadDir . $buktiName);
+}
+
+// 3. Simpan ke pesanan_header
+$sql = "INSERT INTO pesanan_header (nama, email, pembayaran, tanggal, total, status, bukti) 
+        VALUES ('$nama', '$email', '$pembayaran', NOW(), '$total', 'Menunggu Verifikasi', '$buktiName')";
 $koneksi->query($sql);
 $id_pesanan = $koneksi->insert_id;
 
-// Simpan Detail & Kurangi Stok
+// 4. Simpan ke pesanan_detail & Update Stok
 foreach ($produkDipilih as $id) {
-  $produk = $koneksi->query("SELECT * FROM produk WHERE id='$id'")->fetch_assoc();
-  if ($produk) {
-    $qty = isset($jumlahDipilih[$id]) ? (int)$jumlahDipilih[$id] : 1;
-    $subtotal = $produk['harga'] * $qty;
+    $produk = $koneksi->query("SELECT * FROM produk WHERE id='$id'")->fetch_assoc();
+    if ($produk) {
+        $qty = isset($jumlahDipilih[$id]) ? (int)$jumlahDipilih[$id] : 1;
+        $subtotal = $produk['harga'] * $qty;
 
-    $sqlDetail = "INSERT INTO pesanan_detail (id_pesanan,produk_id,jumlah,harga,subtotal) 
-                      VALUES ('$id_pesanan','$id','$qty','" . $produk['harga'] . "','$subtotal')";
-    $koneksi->query($sqlDetail);
+        $sqlDetail = "INSERT INTO pesanan_detail (id_pesanan, produk_id, jumlah, harga, subtotal) 
+                      VALUES ('$id_pesanan', '$id', '$qty', '" . $produk['harga'] . "', '$subtotal')";
+        $koneksi->query($sqlDetail);
 
-    // Logika Pengurangan Stok Otomatis
-    $stokBaru = $produk['stok'] - $qty;
-    $koneksi->query("UPDATE produk SET stok='$stokBaru' WHERE id='$id'");
-  }
+        // Kurangi Stok
+        $stokBaru = $produk['stok'] - $qty;
+        $koneksi->query("UPDATE produk SET stok='$stokBaru' WHERE id='$id'");
+    }
 }
 ?>
 <!DOCTYPE html>
 <html lang="id">
 
 <head>
-  <meta charset="UTF-8">
-  <title>Pesanan Berhasil - Kedaiku</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    body {
-      background: linear-gradient(135deg, #fff0f0, #ffcccc);
-      font-family: 'Poppins', sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+    <meta charset="UTF-8">
+    <title>Pesanan Berhasil - Kedaiku</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <style>
+        body {
+            background: #c7b7a3; /* Tema Kedaiku */
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+        }
 
-    .navbar-custom {
-      background-color: #8B0000;
-    }
+        .success-card {
+            background: #ffffff;
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
 
-    .card-custom {
-      background: #ffffff;
-      border: none;
-      box-shadow: 0 4px 15px rgba(139, 0, 0, 0.1);
-    }
+        .success-icon {
+            font-size: 80px;
+            color: #198754;
+            animation: bounceIn 1s;
+        }
 
-    footer {
-      background: #5c0000;
-      margin-top: auto;
-    }
-  </style>
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); opacity: 1; }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+
+        .btn-print {
+            background: #561c24;
+            color: white;
+            border: none;
+            transition: 0.3s;
+        }
+
+        .btn-print:hover {
+            background: #6d2932;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(86, 28, 36, 0.3);
+        }
+
+        .pick-up-box {
+            background: #fdf5e6;
+            border-left: 5px solid #561c24;
+            border-radius: 10px;
+        }
+
+        h2 { font-family: 'Playfair Display', serif; color: #561c24; }
+    </style>
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
 
-  <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
-    <div class="container">
-      <a class="navbar-brand fw-bold" href="index.php">☕ Kedaiku</a>
-      <div class="collapse navbar-collapse">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link text-warning fw-bold" href="index.php">← Kembali ke Home</a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+    <?php include 'layout/header.php'; ?>
 
-  <div class="container my-5">
-    <h1 class="text-center mb-4 text-success fw-bold">Pesanan Berhasil!</h1>
-    <div class="row justify-content-center">
-      <div class="col-md-8">
-        <div class="card card-custom p-4 text-center">
-          <h4 class="fw-bold mb-3">Terima Kasih, <?php echo htmlspecialchars($nama); ?>!</h4>
-          <p>Pesanan dan bukti pembayaran Anda sudah kami terima. Admin kami akan segera memverifikasi pembayaran Anda.</p>
+    <div class="container my-auto py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-7">
+                <div class="card success-card p-5 text-center">
+                    <div class="success-icon mb-4">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    
+                    <h2 class="fw-bold mb-2 text-uppercase">Pesanan Berhasil!</h2>
+                    <p class="text-muted mb-4 fs-5">Terima kasih, <strong><?php echo htmlspecialchars($nama); ?></strong>. Pesanan Anda telah tercatat dalam sistem kami.</p>
 
-          <div class="mt-4">
-            <a href="cetak_pdf.php?id=<?php echo $id_pesanan; ?>" target="_blank" class="btn btn-danger btn-lg fw-bold px-4">🖨️ Cetak Nota (PDF)</a>
-          </div>
+                    <div class="pick-up-box p-3 mb-4 text-start">
+                        <h6 class="fw-bold text-dark mb-1"><i class="fa-solid fa-location-dot me-2"></i> Langkah Selanjutnya:</h6>
+                        <p class="small mb-0 text-dark">
+                            Silakan datang ke toko kami di <strong>Jl. Bulurejo Jalan 12 Jombang</strong> untuk mengambil pesanan Anda dengan menunjukkan Nota Digital yang bisa Anda unduh di bawah ini.
+                        </p>
+                    </div>
+
+                    <div class="d-grid gap-3">
+                        <a href="cetak_pdf.php?id=<?php echo $id_pesanan; ?>" target="_blank" class="btn btn-print btn-lg fw-bold py-3 rounded-pill">
+                            <i class="fa-solid fa-file-pdf me-2"></i> Download Nota Digital (PDF)
+                        </a>
+                        <a href="index.php" class="btn btn-outline-secondary btn-lg rounded-pill">
+                            <i class="fa-solid fa-house me-2"></i> Kembali ke Beranda
+                        </a>
+                    </div>
+                </div>
+                
+                <p class="text-center mt-4 text-dark opacity-75 small">
+                    Butuh bantuan? Hubungi WhatsApp kami di 0812-xxxx-xxxx
+                </p>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 
-  <footer class="text-white text-center py-3">
-    <p>&copy; <?php echo date("Y"); ?> Kedaiku. All rights reserved.</p>
-  </footer>
+    <?php include 'layout/footer.php'; ?>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
-
 </html>
