@@ -49,6 +49,19 @@ if (isset($_POST['tambah_admin'])) {
             background: #561c24;
         }
 
+        /* CSS Tambahan untuk Logo agar rapi */
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .navbar-brand img {
+            height: 40px;
+            width: auto;
+            border-radius: 4px;
+        }
+
         /* Judul */
         h2 {
             color: #561c24;
@@ -82,9 +95,12 @@ if (isset($_POST['tambah_admin'])) {
 
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top shadow">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="admin.php">☕ Admin Kedaiku</a>
+            <a class="navbar-brand fw-bold" href="admin.php">
+                <img src="assets/gambar/Logo_Project.jpeg" alt="Logo Kedaiku">
+                Admin Kedaiku
+            </a>
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="admin.php">Pesanan</a></li>
