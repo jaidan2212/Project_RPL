@@ -219,15 +219,8 @@ foreach ($produkDipilih as $id) {
                                 <input type="file" name="bukti_qris" id="bukti_qris" class="form-control" accept="image/*">
                             </div>
 
-<<<<<<< HEAD
-
-                            <a href="produk.php" class="btn btn-success mt-3">Kembali</a>
-                            <button type="submit" class="btn btn-success mt-3">
-                                Pesan Sekarang
-=======
                             <button type="submit" class="btn btn-main w-100 btn-lg shadow mt-3 text-uppercase">
                                 <i class="fa-solid fa-circle-check me-2"></i> Selesaikan Pesanan
->>>>>>> 5a1dd3822f92c8c8634761eef7022918198bb052
                             </button>
 
                             <a href="produk.php" class="btn btn-back w-100 btn-lg mt-3 text-uppercase">
