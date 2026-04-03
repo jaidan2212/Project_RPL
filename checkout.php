@@ -1,5 +1,13 @@
-<?php include 'koneksi.php'; ?>
-<?php
+<?php 
+session_start();
+include 'koneksi.php'; 
+
+// Jika belum login, arahkan ke login
+if (!isset($_SESSION['username'])) {
+    header("Location: login.php");
+    exit();
+}
+
 $produkDipilih = isset($_POST['produk_id']) ? $_POST['produk_id'] : [];
 $jumlahDipilih = isset($_POST['jumlah']) ? $_POST['jumlah'] : [];
 
@@ -7,6 +15,7 @@ $daftarProduk = [];
 $total = 0;
 
 foreach ($produkDipilih as $id) {
+    // Tetap pakai query database asli kamu
     $produk = $koneksi->query("SELECT * FROM produk WHERE id='$id'")->fetch_assoc();
     if ($produk) {
         $qty = isset($jumlahDipilih[$id]) ? (int)$jumlahDipilih[$id] : 1;
@@ -24,363 +33,244 @@ foreach ($produkDipilih as $id) {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="id">
 
 <head>
     <meta charset="UTF-8">
-    <title>Checkout Produk</title>
+    <title>Checkout - Kedaiku Biji Kopi</title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
-
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #f7efe5, #e6cfa7);
+            background: #c7b7a3;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
         }
 
-        /* Judul */
-        h1 {
-            font-weight: 600;
-            color: #4e342e;
+        h1, h4, h5 {
+            font-family: 'Playfair Display', serif;
+            color: #561c24;
+            font-weight: 700;
         }
 
-        /* Card utama */
         .checkout-card {
-            background: #fffdf9;
-            border: none;
-            border-radius: 18px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        /* List produk */
-        .list-group-item {
-            border: none;
-            border-bottom: 1px dashed #ddd;
-            background: transparent;
-            font-weight: 500;
-            padding: 12px 0;
-        }
-
-        /* Total harga */
-        h5 {
-            margin-top: 15px;
-            font-weight: 600;
-            color: #6d4c41;
-        }
-
-        /* Form */
-        .form-label {
-            font-weight: 500;
-            color: #5d4037;
-        }
-
-        .form-control,
-        .form-select {
-            border-radius: 12px;
-            padding: 10px 14px;
-            border: 1px solid #d7ccc8;
-        }
-
-        .form-control:focus,
-        .form-select:focus {
-            border-color: #8d6e63;
-            box-shadow: 0 0 0 0.15rem rgba(141, 110, 99, 0.25);
-        }
-
-        /* Bank option */
-        .bank-option {
-            border-radius: 14px;
-            border: 1px solid #d7ccc8;
             background: #fff;
-            font-weight: 500;
-            transition: all .3s ease;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
 
-        .bank-option:hover {
-            background: #8d6e63;
+        .form-label { font-weight: 600; color: #561c24; }
+
+        .btn-main {
+            background: #6d2932;
             color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, .2);
-        }
-
-        /* Detail rekening */
-        #detail_rekening {
-            border-radius: 14px;
             border: none;
-            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-        }
-
-        #detail_rekening h5 {
             font-weight: 600;
-            color: #0d47a1;
-        }
-
-        /* QRIS */
-        #ewallet_section {
-            border-radius: 14px;
-            border: none;
-            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
-            text-align: center;
-        }
-
-        #ewallet_section img {
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Tombol */
-        .btn-success {
-            background: linear-gradient(135deg, #6d4c41, #4e342e);
-            border: none;
-            border-radius: 14px;
-            font-weight: 600;
+            border-radius: 8px;
             padding: 12px;
-            transition: .3s;
+            transition: 0.3s;
         }
 
-        .btn-success:hover {
-            background: linear-gradient(135deg, #5d4037, #3e2723);
+        .btn-main:hover {
+            background: #561c24;
+            color: white;
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, .25);
         }
 
-        /* Tombol salin */
-        .btn-secondary {
+        /* Style Tombol Kembali */
+        .btn-back {
+            border: 2px solid #6d2932;
+            color: #6d2932;
+            background: transparent;
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 12px;
+            transition: 0.3s;
+            display: block;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn-back:hover {
+            background: #f8f1e9;
+            color: #561c24;
+            border-color: #561c24;
+        }
+
+        .bank-option {
             border-radius: 10px;
-            font-size: 13px;
-            padding: 4px 10px;
+            border: 2px solid #e8d8c4;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
         }
 
-        /* Alert */
-        .alert {
-            border-radius: 14px;
-            font-weight: 500;
+        .bank-option.active {
+            background: #561c24;
+            color: white;
+            border-color: #561c24;
         }
 
-        /* Responsive */
-        @media(max-width:768px) {
-            .checkout-card {
-                padding: 25px 20px;
-            }
+        .box-pembayaran {
+            border-radius: 10px;
+            padding: 20px;
+            background-color: #f8f9fa;
         }
     </style>
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="index.php">☕ Toko Kopi</a>
-        </div>
-    </nav>
+    <?php include 'layout/header.php'; ?>
 
-    <div class="container my-5">
-
-        <h1 class="text-center mb-4">Checkout Produk</h1>
+    <div class="container my-5 flex-grow-1">
+        <h1 class="text-center mb-4">Proses Checkout</h1>
 
         <?php if (empty($daftarProduk)) { ?>
-
-            <div class="alert alert-danger text-center">
-                Tidak ada produk dipilih. Silakan kembali ke halaman produk.
+            <div class="alert alert-danger text-center shadow-sm border-0 py-5 rounded-4">
+                <i class="fa-solid fa-cart-arrow-down fs-1 mb-3 text-danger"></i><br>
+                <h5 class="fw-bold text-danger">Keranjang Kosong</h5>
+                <p>Silakan pilih kopi terlebih dahulu.</p>
+                <a href="produk.php" class="btn btn-main px-5 rounded-pill mt-3 text-decoration-none">Kembali ke Katalog</a>
             </div>
-
         <?php } else { ?>
 
             <div class="row justify-content-center">
-                <div class="col-md-8">
+                <div class="col-lg-8">
+                    <div class="card checkout-card p-4 p-md-5">
 
-                    <div class="card checkout-card p-4">
-
-                        <h4 class="mb-3">Produk yang Anda pilih:</h4>
-
-                        <ul class="list-group mb-3">
-
+                        <h4 class="mb-4 border-bottom pb-2 text-uppercase"><i class="fa-solid fa-receipt me-2"></i> Ringkasan Pesanan</h4>
+                        <ul class="list-group mb-4">
                             <?php foreach ($daftarProduk as $p) { ?>
-
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <?php echo $p['nama']; ?> (x<?php echo $p['jumlah']; ?>)
-                                    <span>Rp <?php echo number_format($p['subtotal'], 0, ',', '.'); ?></span>
+                                <li class="list-group-item d-flex justify-content-between align-items-center border-0 border-bottom py-3">
+                                    <div>
+                                        <h6 class="fw-bold mb-0 text-dark"><?php echo $p['nama']; ?></h6>
+                                        <small class="text-muted">Kuantitas: <?php echo $p['jumlah']; ?>x</small>
+                                    </div>
+                                    <span class="fw-bold" style="color: #561c24;">Rp <?php echo number_format($p['subtotal'], 0, ',', '.'); ?></span>
                                 </li>
-
                             <?php } ?>
-
+                            <li class="list-group-item d-flex justify-content-between align-items-center border-0 pt-3">
+                                <h5 class="mb-0 text-dark">Total Pembayaran</h5>
+                                <h4 class="mb-0 fw-bold" style="color: #561c24;">Rp <?php echo number_format($total, 0, ',', '.'); ?></h4>
+                            </li>
                         </ul>
 
-                        <h5>Total: Rp <?php echo number_format($total, 0, ',', '.'); ?></h5>
+                        <div class="alert border-0 shadow-sm mb-4" style="background-color: #fdf5e6; color: #561c24; border-radius: 10px;">
+                            <div class="d-flex align-items-center">
+                                <i class="fa-solid fa-location-dot fs-3 me-3 text-danger"></i>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Lokasi Toko Jombang:</h6>
+                                    <p class="mb-0 small">Jl. Bulurejo Jalan 12 Jombang, Jawa Timur.</p>
+                                </div>
+                            </div>
+                        </div>
 
                         <form method="post" action="proses_pesanan.php" enctype="multipart/form-data">
-
                             <?php foreach ($daftarProduk as $p) { ?>
-
                                 <input type="hidden" name="produk_id[]" value="<?php echo $p['id']; ?>">
                                 <input type="hidden" name="jumlah[<?php echo $p['id']; ?>]" value="<?php echo $p['jumlah']; ?>">
-
                             <?php } ?>
+                            <input type="hidden" name="total_harga" value="<?php echo $total; ?>">
 
-                            <div class="mb-3">
-                                <label class="form-label">Nama Pembeli</label>
-                                <input type="text" name="nama" class="form-control" required>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Nama Pengambil</label>
+                                    <input type="text" name="nama" class="form-control" value="<?php echo $_SESSION['username']; ?>" required>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label">Email Konfirmasi</label>
+                                    <input type="email" name="email" class="form-control" placeholder="email@gmail.com" required>
+                                </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Email</label>
-                                <input type="email" name="email" class="form-control" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Metode Pembayaran</label>
-
-                                <select name="pembayaran" id="metode_pembayaran" class="form-select" onchange="tampilMetode()" required>
-
-                                    <option value="">Pilih Metode Pembayaran</option>
-                                    <option value="Transfer Bank">Transfer Bank</option>
-                                    <option value="E-Wallet">E-Wallet (QRIS)</option>
-
+                            <div class="mb-4">
+                                <label class="form-label">Pilih Metode Pembayaran</label>
+                                <select name="pembayaran" id="metode_pembayaran" class="form-select fw-bold" onchange="tampilMetode()" required>
+                                    <option value="">-- Silakan Pilih Metode --</option>
+                                    <option value="Transfer Bank">🏦 Transfer Bank</option>
+                                    <option value="QRIS">📱 E-Wallet (QRIS)</option> 
                                 </select>
                             </div>
 
-
-
-
-                            <div id="bank_section" style="display:none;" class="mt-3">
-
-                                <h5>Pilih Bank</h5>
-
-                                <div class="card p-3 mb-2 bank-option" onclick="pilihBank('BCA')">
-                                    🏦 Bank BCA
+                            <div id="bank_section" style="display:none;" class="mb-4 text-center">
+                                <label class="form-label d-block text-start">Pilih Bank</label>
+                                <div class="row g-2">
+                                    <div class="col-4"><div id="bank_bca" class="card p-3 bank-option" onclick="pilihBank('BCA')">BCA</div></div>
+                                    <div class="col-4"><div id="bank_bri" class="card p-3 bank-option" onclick="pilihBank('BRI')">BRI</div></div>
+                                    <div class="col-4"><div id="bank_mandiri" class="card p-3 bank-option" onclick="pilihBank('Mandiri')">Mandiri</div></div>
                                 </div>
-
-                                <div class="card p-3 mb-2 bank-option" onclick="pilihBank('BRI')">
-                                    🏦 Bank BRI
-                                </div>
-
-                                <div class="card p-3 mb-2 bank-option" onclick="pilihBank('Mandiri')">
-                                    🏦 Bank Mandiri
-                                </div>
-
                             </div>
 
-
-                            <!-- DETAIL REKENING -->
-
-                            <div id="detail_rekening" style="display:none;" class="alert alert-info mt-3">
-
-                                <h5 id="nama_bank"></h5>
-
-                                <p>No Rekening : <span id="no_rek"></span></p>
-
-                                <p>a.n Toko Kopi</p>
-
-                                <label class="form-label">Upload Bukti Transfer</label>
-
-                                <input type="file" name="bukti" id="bukti_transfer" class="form-control">
-
+                            <div id="detail_rekening" style="display:none;" class="box-pembayaran border border-info mb-4 shadow-sm">
+                                <h5 id="nama_bank" class="text-info mb-1"></h5>
+                                <h4 id="no_rek" class="fw-bold mb-3"></h4>
+                                <input type="file" name="bukti_transfer" id="bukti_transfer" class="form-control" accept="image/*">
                             </div>
 
-
-                            <!-- QRIS -->
-
-                            <div id="ewallet_section" style="display:none;" class="alert alert-success mt-3">
-
-                                <h5>Pembayaran E-Wallet (QRIS)</h5>
-
-                                <p>Silakan scan QRIS berikut:</p>
-
-                                <img src="assets/gambar/qris.png" width="250" class="img-fluid mb-3">
-
-                                <label class="form-label">Upload Bukti Pembayaran QRIS</label>
-
-                                <input type="file" name="bukti" id="bukti_qris" class="form-control">
-
+                            <div id="ewallet_section" style="display:none;" class="box-pembayaran border border-success mb-4 shadow-sm text-center">
+                                <h5 class="text-success fw-bold mb-3">Scan QRIS Kedaiku</h5>
+                                <img src="assets/gambar/qris.png" width="180" class="img-fluid mb-3 border">
+                                <input type="file" name="bukti_qris" id="bukti_qris" class="form-control" accept="image/*">
                             </div>
 
+<<<<<<< HEAD
 
                             <a href="produk.php" class="btn btn-success mt-3">Kembali</a>
                             <button type="submit" class="btn btn-success mt-3">
                                 Pesan Sekarang
+=======
+                            <button type="submit" class="btn btn-main w-100 btn-lg shadow mt-3 text-uppercase">
+                                <i class="fa-solid fa-circle-check me-2"></i> Selesaikan Pesanan
+>>>>>>> 5a1dd3822f92c8c8634761eef7022918198bb052
                             </button>
 
-                        </form>
+                            <a href="produk.php" class="btn btn-back w-100 btn-lg mt-3 text-uppercase">
+                                <i class="fa-solid fa-arrow-left me-2"></i> Kembali Pilih Kopi
+                            </a>
 
+                        </form>
                     </div>
                 </div>
             </div>
-
         <?php } ?>
-
     </div>
 
-    <footer class="text-white text-center py-3">
-        <p>&copy; <?php echo date("Y"); ?> Toko Biji Kopi</p>
-    </footer>
+    <?php include 'layout/footer.php'; ?>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function tampilMetode() {
-
             var metode = document.getElementById("metode_pembayaran").value;
-
-            document.getElementById("bank_section").style.display = "none";
+            document.getElementById("bank_section").style.display = (metode == "Transfer Bank") ? "block" : "none";
+            document.getElementById("ewallet_section").style.display = (metode == "QRIS") ? "block" : "none";
             document.getElementById("detail_rekening").style.display = "none";
-            document.getElementById("ewallet_section").style.display = "none";
-
-            if (metode == "Transfer Bank") {
-                document.getElementById("bank_section").style.display = "block";
-            }
-
-            if (metode == "E-Wallet") {
-                document.getElementById("ewallet_section").style.display = "block";
-            }
-
         }
 
         function pilihBank(bank) {
-
             document.getElementById("detail_rekening").style.display = "block";
+            var options = document.getElementsByClassName("bank-option");
+            for (var i = 0; i < options.length; i++) options[i].classList.remove("active");
 
             if (bank == "BCA") {
                 document.getElementById("nama_bank").innerText = "Bank BCA";
-                document.getElementById("no_rek").innerText = "1234567890";
-            }
-
-            if (bank == "BRI") {
+                document.getElementById("no_rek").innerText = "1234 5678 90";
+                document.getElementById("bank_bca").classList.add("active");
+            } else if (bank == "BRI") {
                 document.getElementById("nama_bank").innerText = "Bank BRI";
-                document.getElementById("no_rek").innerText = "9876543210";
-            }
-
-            if (bank == "Mandiri") {
+                document.getElementById("no_rek").innerText = "9876 5432 10";
+                document.getElementById("bank_bri").classList.add("active");
+            } else if (bank == "Mandiri") {
                 document.getElementById("nama_bank").innerText = "Bank Mandiri";
-                document.getElementById("no_rek").innerText = "1122334455";
+                document.getElementById("no_rek").innerText = "1122 3344 55";
+                document.getElementById("bank_mandiri").classList.add("active");
             }
-
         }
-
-        document.querySelector("form").addEventListener("submit", function(e) {
-
-            var metode = document.getElementById("metode_pembayaran").value;
-
-            var buktiTransfer = document.getElementById("bukti_transfer").files.length;
-            var buktiQris = document.getElementById("bukti_qris").files.length;
-
-            if (metode == "Transfer Bank" && buktiTransfer == 0) {
-                alert("Silakan upload bukti transfer terlebih dahulu.");
-                e.preventDefault();
-            }
-
-            if (metode == "E-Wallet" && buktiQris == 0) {
-                alert("Silakan upload bukti pembayaran QRIS terlebih dahulu.");
-                e.preventDefault();
-            }
-
-        });
     </script>
-
 </body>
-
 </html>

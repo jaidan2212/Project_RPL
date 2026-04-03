@@ -47,6 +47,19 @@ if (isset($_POST['simpan'])) {
       background: #561c24;
     }
 
+    /* CSS Tambahan untuk Logo agar rapi */
+    .navbar-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .navbar-brand img {
+        height: 40px;
+        width: auto;
+        border-radius: 4px;
+    }
+
     /* Judul */
     h2 {
       color: #561c24;
@@ -80,9 +93,12 @@ if (isset($_POST['simpan'])) {
 
 <body>
 
-  <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
+  <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top shadow">
     <div class="container">
-      <a class="navbar-brand fw-bold" href="admin.php">☕ Admin Kedaiku</a>
+      <a class="navbar-brand fw-bold" href="admin.php">
+          <img src="assets/gambar/Logo_Project.jpeg" alt="Logo Kedaiku">
+          Admin Kedaiku
+      </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -127,6 +143,7 @@ if (isset($_POST['simpan'])) {
     </div>
   </div>
 
+  <?php include 'layout/footer.php'; ?>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
