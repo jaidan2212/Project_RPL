@@ -302,7 +302,8 @@ foreach ($produkDipilih as $id) {
                             </div>
 
 
-                            <button type="submit" class="btn btn-success w-100 mt-3">
+                            <a href="produk.php" class="btn btn-success mt-3">Kembali</a>
+                            <button type="submit" class="btn btn-success mt-3">
                                 Pesan Sekarang
                             </button>
 
