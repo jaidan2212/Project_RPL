@@ -125,7 +125,7 @@ if (isset($_POST['simpan'])) {
               <input type="text" name="nama" class="form-control" required>
             </div>
             <div class="mb-3">
-              <label class="form-label fw-bold">Harga (Rp)</label>
+              <label class="form-label fw-bold">Harga /kg (Rp)</label>
               <input type="number" name="harga" class="form-control" required>
             </div>
             <div class="mb-3">

@@ -165,7 +165,7 @@ if (isset($_GET['hapus'])) {
                     <h6 class="fw-bold"><?php echo $row['nama']; ?></h6>
 
                     <p class="mb-1">
-                        Rp <?php echo number_format($row['harga'], 0, ',', '.'); ?>
+                        Rp <?php echo number_format($row['harga'], 0, ',', '.'); ?>/kg
                     </p>
 
                     <?php if ($row['stok'] > 0) { ?>

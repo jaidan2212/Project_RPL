@@ -19,12 +19,10 @@ if (isset($_POST['update'])) {
     $harga = $_POST['harga'];
     $stok = $_POST['stok'];
 
-    // Cek apakah admin upload gambar baru
     if ($_FILES['gambar']['name'] != "") {
         $gambar = $_FILES['gambar']['name'];
         $tmp = $_FILES['gambar']['tmp_name'];
         move_uploaded_file($tmp, "assets/gambar/" . $gambar);
-
         $sql = "UPDATE produk SET nama='$nama', harga='$harga', stok='$stok', gambar='$gambar' WHERE id='$id'";
     } else {
         $sql = "UPDATE produk SET nama='$nama', harga='$harga', stok='$stok' WHERE id='$id'";
@@ -42,9 +40,11 @@ if (isset($_POST['update'])) {
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Produk - Admin Kedaiku</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    
     <style>
         body {
             background: #cbb79c;
@@ -53,14 +53,15 @@ if (isset($_POST['update'])) {
 
         /* --- NAVBAR CUSTOM --- */
         .navbar-custom {
-            background: #561c24; /* Warna Maroon Gelap */
+            background: #561c24; 
             padding: 12px 0;
         }
 
         .navbar-brand {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            color: white !important;
         }
 
         .navbar-brand img {
@@ -69,37 +70,36 @@ if (isset($_POST['update'])) {
             border-radius: 4px;
         }
 
-        /* Navigasi Menu */
-        .navbar-nav .nav-item {
-            margin: 0 5px;
-        }
-
+        /* Nav Link Base */
         .navbar-nav .nav-link {
             color: white !important;
-            background: transparent; /* Tetap Merah Maroon mengikuti Navbar */
-            padding: 10px 20px !important;
+            padding: 8px 18px !important;
             border-radius: 10px;
             transition: all 0.3s ease;
-            font-weight: 500;
-            border: 1px solid rgba(255, 255, 255, 0.1); /* Garis tepi tipis agar bentuk kotak terlihat sedikit */
+            font-weight: 500; /* Ketebalan normal seragam */
+            margin: 0 4px;
+            background-color: rgba(255, 255, 255, 0.05); 
+            border: 1px solid rgba(255, 255, 255, 0.15); 
         }
 
-        /* EFEK HOVER & ACTIVE: Berubah jadi Krem (Sesuai Foto 3) */
-        .navbar-nav .nav-link:hover,
+        /* REVISI: Menghilangkan Bold pada menu aktif agar seragam */
         .navbar-nav .nav-link.active {
-            background: #e8d8c4 !important; /* Warna Krem */
-            color: #561c24 !important;      /* Teks jadi Maroon Gelap */
+            background-color: rgba(255, 255, 255, 0.1) !important; 
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            color: white !important;
+            font-weight: 500; /* Disamakan dengan yang lain, tidak bold */
+        }
+
+        /* Efek Hover Krem */
+        .navbar-nav .nav-link:hover {
+            background-color: #e8d8c4 !important; 
+            color: #561c24 !important;            
             border-color: #e8d8c4 !important;
         }
 
-        /* Tombol Logout */
         .nav-logout {
-            background: #8d2a36 !important; /* Merah sedikit lebih terang agar beda */
-        }
-        
-        .nav-logout:hover {
-            background: #e8d8c4 !important;
-            color: #561c24 !important;
+            color: white !important;
+            font-weight: 600 !important;
         }
 
         /* --- FORM STYLING --- */
@@ -129,7 +129,6 @@ if (isset($_POST['update'])) {
 
         .btn-custom:hover {
             background: #3e141a;
-            color: white;
         }
     </style>
 </head>
@@ -168,7 +167,7 @@ if (isset($_POST['update'])) {
                             <input type="text" name="nama" class="form-control" value="<?php echo htmlspecialchars($data['nama']); ?>" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Harga (Rp)</label>
+                            <label class="form-label fw-bold">Harga /kg (Rp)</label>
                             <input type="number" name="harga" class="form-control" value="<?php echo $data['harga']; ?>" required>
                         </div>
                         <div class="mb-3">
@@ -176,7 +175,7 @@ if (isset($_POST['update'])) {
                             <input type="number" name="stok" class="form-control" value="<?php echo isset($data['stok']) ? $data['stok'] : 0; ?>" required min="0">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Gambar Produk (Biarkan kosong jika tidak diganti)</label><br>
+                            <label class="form-label fw-bold">Gambar Produk</label><br>
                             <img src="assets/gambar/<?php echo $data['gambar']; ?>" width="100" class="mb-3 rounded shadow-sm border border-white">
                             <input type="file" name="gambar" class="form-control">
                         </div>
@@ -188,13 +187,8 @@ if (isset($_POST['update'])) {
         </div>
     </div>
 
-    <?php 
-    if(file_exists('layout/footer.php')) {
-        include 'layout/footer.php'; 
-    }
-    ?>
+    <?php if(file_exists('layout/footer.php')) include 'layout/footer.php'; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>
