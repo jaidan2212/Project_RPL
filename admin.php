@@ -21,6 +21,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
     <style>
+        /* CSS ASLI KAMU */
         body {
             font-family: 'Poppins', sans-serif;
             background: #c7b7a3;
@@ -32,15 +33,14 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
             padding-bottom: 10px;
         }
 
-        /* Penyesuaian Logo agar Rapi */
         .navbar-brand {
             display: flex;
             align-items: center;
-            gap: 12px; /* Jarak antara logo dan teks */
+            gap: 12px;
         }
 
         .navbar-brand img {
-            height: 40px; /* Ukuran tinggi logo */
+            height: 40px;
             width: auto;
             border-radius: 4px;
         }
@@ -95,7 +95,6 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
 
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top shadow">
         <div class="container">
-
             <a class="navbar-brand fw-bold" href="admin.php">
                 <img src="assets/gambar/Logo_Project.jpeg" alt="Logo Kedaiku">
                 Admin Kedaiku
@@ -107,21 +106,11 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="admin.php">Pesanan</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="kelola_produk.php">Daftar Produk</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="tambah_produk.php">Tambah Produk</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="tambah_admin.php">Tambah Admin</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-warning fw-bold" href="logout.php">Logout</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link active" href="admin.php">Pesanan</a></li>
+                    <li class="nav-item"><a class="nav-link" href="kelola_produk.php">Daftar Produk</a></li>
+                    <li class="nav-item"><a class="nav-link" href="tambah_produk.php">Tambah Produk</a></li>
+                    <li class="nav-item"><a class="nav-link" href="tambah_admin.php">Tambah Admin</a></li>
+                    <li class="nav-item"><a class="nav-link text-warning fw-bold" href="logout.php">Logout</a></li>
                 </ul>
             </div>
         </div>
@@ -152,7 +141,15 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
                         if ($query->num_rows > 0) {
                             while ($row = $query->fetch_assoc()) {
                                 $status = $row['status'] ?? 'Menunggu Pembayaran';
-                                $badgeColor = ($status == 'Terverifikasi') ? 'bg-success' : 'bg-warning text-dark';
+                                
+                                // Penentuan warna badge
+                                if ($status == 'Terverifikasi') {
+                                    $badgeColor = 'bg-success';
+                                } elseif ($status == 'Dibatalkan') {
+                                    $badgeColor = 'bg-danger';
+                                } else {
+                                    $badgeColor = 'bg-warning text-dark';
+                                }
                         ?>
                                 <tr>
                                     <td class="fw-bold">#<?php echo $row['id']; ?></td>
@@ -161,36 +158,28 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
                                     <td class="fw-bold text-danger">
                                         Rp <?php echo number_format($row['total'], 0, ',', '.'); ?>
                                     </td>
-                                    <td>
-                                        <?php echo date('d-m-Y H:i', strtotime($row['tanggal'])); ?>
-                                    </td>
+                                    <td><?php echo date('d-m-Y H:i', strtotime($row['tanggal'])); ?></td>
                                     <td>
                                         <?php if (!empty($row['bukti'])) { ?>
-                                            <a href="assets/gambar/<?php echo $row['bukti']; ?>"
-                                                target="_blank"
-                                                class="btn btn-outline-info btn-sm fw-bold">
-                                                Lihat Bukti 📄
+                                            <a href="assets/gambar/<?php echo $row['bukti']; ?>" target="_blank" class="btn btn-outline-info btn-sm fw-bold">Lihat Bukti 📄</a>
+                                        <?php } else { echo "<span class='text-muted small'>Tidak Ada</span>"; } ?>
+                                    </td>
+                                    <td><span class="badge <?php echo $badgeColor; ?>"><?php echo $status; ?></span></td>
+                                    <td>
+                                        <?php if ($status != 'Terverifikasi' && $status != 'Dibatalkan') { ?>
+                                            <a href="verifikasi_pesanan.php?id=<?php echo $row['id']; ?>" 
+                                               class="btn btn-success btn-sm fw-bold mb-1" 
+                                               onclick="return confirm('Verifikasi pembayaran pesanan #<?php echo $row['id']; ?>?');">
+                                               Verifikasi ✓
+                                            </a>
+                                            
+                                            <a href="batal_pesanan.php?id=<?php echo $row['id']; ?>" 
+                                               class="btn btn-danger btn-sm fw-bold mb-1" 
+                                               onclick="return confirm('Apakah Anda yakin ingin MEMBATALKAN pesanan #<?php echo $row['id']; ?>?');">
+                                               Batalkan ✕
                                             </a>
                                         <?php } else { ?>
-                                            <span class="text-muted small">Tidak Ada</span>
-                                        <?php } ?>
-                                    </td>
-                                    <td>
-                                        <span class="badge <?php echo $badgeColor; ?>">
-                                            <?php echo $status; ?>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <?php if ($status != 'Terverifikasi') { ?>
-                                            <a href="verifikasi_pesanan.php?id=<?php echo $row['id']; ?>"
-                                                class="btn btn-success btn-sm fw-bold"
-                                                onclick="return confirm('Verifikasi pembayaran pesanan #<?php echo $row['id']; ?>?');">
-                                                Verifikasi ✓
-                                            </a>
-                                        <?php } else { ?>
-                                            <button class="btn btn-secondary btn-sm fw-bold" disabled>
-                                                Selesai
-                                            </button>
+                                            <button class="btn btn-secondary btn-sm fw-bold" disabled>Selesai</button>
                                         <?php } ?>
                                     </td>
                                 </tr>
@@ -205,9 +194,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
             </div>
         </div>
     </div>
-    
-    <?php include 'layout/footer.php'; ?>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

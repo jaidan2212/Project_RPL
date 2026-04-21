@@ -115,8 +115,8 @@ include 'koneksi.php';
 
     <div class="text-white py-5 text-center shadow-lg my-5" style="background:#6d2932;">
         <div class="container">
-            <h2 class="mb-3 text-white fw-bold text-uppercase">Promo Khusus Website!</h2>
-            <p class="lead mb-4">Dapatkan diskon 20% khusus pemesanan via Web Kedaiku 🎉</p>
+            <h2 class="mb-3 text-white fw-bold text-uppercase">Jelajahi Koleksi Kami!</h2>
+            <p class="lead mb-4">Ingin melihat berbagai pilihan biji kopi premium terbaik dari Kedaiku? <br> Silakan klik tombol katalog di bawah ini untuk mulai menjelajah.</p>
             <a href="produk.php" class="btn btn-light btn-lg px-5 rounded-pill text-dark fw-bold shadow">Lihat Katalog</a>
         </div>
     </div>
@@ -175,7 +175,8 @@ include 'koneksi.php';
     </div>
 
     <div class="container my-5 text-center">
-        <h2 class="fw-bold">Dapatkan Info Promo Terbaru</h2>
+        <h2 class="fw-bold">
+            Dapatkan Info Promo Terbaru</h2>
         <form class="row justify-content-center mt-3" onsubmit="return validateEmail()">
             <div class="col-md-6">
                 <input type="email" id="emailInput" class="form-control rounded-pill px-4" placeholder="Masukkan email @gmail.com Anda">

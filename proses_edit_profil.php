@@ -2,26 +2,29 @@
 session_start();
 include 'koneksi.php';
 
-if (isset($_POST['nama'])) {
-    $username = $_SESSION['username'];
-    $nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
-    $jk = $_POST['jenis_kelamin'];
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $username_lama = $_SESSION['username'];
+    $username_baru = mysqli_real_escape_string($koneksi, $_POST['username']);
+    $telp = mysqli_real_escape_string($koneksi, $_POST['telp']);
+    
+    // Ambil data lama untuk foto
+    $query_lama = $koneksi->query("SELECT foto FROM users WHERE username='$username_lama'");
+    $data_lama = $query_lama->fetch_assoc();
+    $nama_foto = $data_lama['foto'];
 
-    // Cek apakah ada foto baru yang diupload
-    if ($_FILES['foto']['name'] != "") {
-        $uploadDir = "assets/foto/";
-        $fotoName = time() . "_" . $_FILES['foto']['name'];
-        move_uploaded_file($_FILES['foto']['tmp_name'], $uploadDir . $fotoName);
-        
-        $sql = "UPDATE users SET nama_lengkap='$nama', jenis_kelamin='$jk', foto='$fotoName' WHERE username='$username'";
-        $_SESSION['foto'] = $fotoName; // Update session foto
-    } else {
-        $sql = "UPDATE users SET nama_lengkap='$nama', jenis_kelamin='$jk' WHERE username='$username'";
+    // Cek jika ada upload foto baru
+    if (!empty($_FILES['foto']['name'])) {
+        $nama_foto = time() . "_" . $_FILES['foto']['name'];
+        move_uploaded_file($_FILES['foto']['tmp_name'], "assets/foto/" . $nama_foto);
     }
 
-    if ($koneksi->query($sql)) {
+    $query = "UPDATE users SET username='$username_baru', telp='$telp', foto='$nama_foto' WHERE username='$username_lama'";
+    
+    if ($koneksi->query($query)) {
+        $_SESSION['username'] = $username_baru;
         header("Location: profil.php?status=success");
     } else {
-        header("Location: profil.php?status=error");
+        echo "Error: " . $koneksi->error;
     }
 }
+?>

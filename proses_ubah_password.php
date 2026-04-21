@@ -11,7 +11,7 @@ if (isset($_POST['old_password'])) {
     $query = $koneksi->query("SELECT password FROM users WHERE username='$username'");
     $user = $query->fetch_assoc();
 
-    // Verifikasi password lama
+    // Verifikasi password lama menggunakan password_verify
     if (password_verify($old_pass, $user['password'])) {
         if ($new_pass === $conf_pass) {
             $hash_baru = password_hash($new_pass, PASSWORD_DEFAULT);
@@ -23,4 +23,7 @@ if (isset($_POST['old_password'])) {
     } else {
         header("Location: profil.php?status=old_wrong");
     }
+} else {
+    header("Location: profil.php");
 }
+?>

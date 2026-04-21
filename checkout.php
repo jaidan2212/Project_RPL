@@ -82,7 +82,6 @@ foreach ($produkDipilih as $id) {
             transform: translateY(-2px);
         }
 
-        /* Style Tombol Kembali */
         .btn-back {
             border: 2px solid #6d2932;
             color: #6d2932;
@@ -171,7 +170,7 @@ foreach ($produkDipilih as $id) {
                             </div>
                         </div>
 
-                        <form method="post" action="proses_pesanan.php" enctype="multipart/form-data">
+                        <form method="post" action="proses_pesanan.php" enctype="multipart/form-data" id="formCheckout">
                             <?php foreach ($daftarProduk as $p) { ?>
                                 <input type="hidden" name="produk_id[]" value="<?php echo $p['id']; ?>">
                                 <input type="hidden" name="jumlah[<?php echo $p['id']; ?>]" value="<?php echo $p['jumlah']; ?>">
@@ -205,17 +204,20 @@ foreach ($produkDipilih as $id) {
                                     <div class="col-4"><div id="bank_bri" class="card p-3 bank-option" onclick="pilihBank('BRI')">BRI</div></div>
                                     <div class="col-4"><div id="bank_mandiri" class="card p-3 bank-option" onclick="pilihBank('Mandiri')">Mandiri</div></div>
                                 </div>
+                                <input type="hidden" name="bank_nama" id="bank_nama_input">
                             </div>
 
-                            <div id="detail_rekening" style="display:none;" class="box-pembayaran border border-info mb-4 shadow-sm">
+                            <div id="detail_rekening" style="display:none;" class="box-pembayaran border border-info mb-4 shadow-sm text-start">
                                 <h5 id="nama_bank" class="text-info mb-1"></h5>
                                 <h4 id="no_rek" class="fw-bold mb-3"></h4>
+                                <label class="form-label small">Upload Bukti Transfer (Wajib)</label>
                                 <input type="file" name="bukti_transfer" id="bukti_transfer" class="form-control" accept="image/*">
                             </div>
 
                             <div id="ewallet_section" style="display:none;" class="box-pembayaran border border-success mb-4 shadow-sm text-center">
                                 <h5 class="text-success fw-bold mb-3">Scan QRIS Kedaiku</h5>
                                 <img src="assets/gambar/qris.png" width="180" class="img-fluid mb-3 border">
+                                <label class="form-label d-block text-start small">Upload Bukti QRIS (Wajib)</label>
                                 <input type="file" name="bukti_qris" id="bukti_qris" class="form-control" accept="image/*">
                             </div>
 
@@ -240,13 +242,31 @@ foreach ($produkDipilih as $id) {
     <script>
         function tampilMetode() {
             var metode = document.getElementById("metode_pembayaran").value;
-            document.getElementById("bank_section").style.display = (metode == "Transfer Bank") ? "block" : "none";
-            document.getElementById("ewallet_section").style.display = (metode == "QRIS") ? "block" : "none";
+            var bankSection = document.getElementById("bank_section");
+            var ewalletSection = document.getElementById("ewallet_section");
+            var inputQris = document.getElementById("bukti_qris");
+            var inputBank = document.getElementById("bukti_transfer");
+
+            // Reset tampilan
+            bankSection.style.display = (metode == "Transfer Bank") ? "block" : "none";
+            ewalletSection.style.display = (metode == "QRIS") ? "block" : "none";
             document.getElementById("detail_rekening").style.display = "none";
+            
+            // Reset required
+            inputQris.required = false;
+            inputBank.required = false;
+
+            // Jika QRIS, maka input bukti QRIS wajib diisi
+            if (metode == "QRIS") {
+                inputQris.required = true;
+            }
         }
 
         function pilihBank(bank) {
             document.getElementById("detail_rekening").style.display = "block";
+            document.getElementById("bukti_transfer").required = true; // Wajib upload jika bank dipilih
+            document.getElementById("bank_nama_input").value = bank;
+
             var options = document.getElementsByClassName("bank-option");
             for (var i = 0; i < options.length; i++) options[i].classList.remove("active");
 
@@ -264,6 +284,18 @@ foreach ($produkDipilih as $id) {
                 document.getElementById("bank_mandiri").classList.add("active");
             }
         }
+
+        // Validasi Tambahan saat Submit
+        document.getElementById("formCheckout").onsubmit = function() {
+            var metode = document.getElementById("metode_pembayaran").value;
+            var bankNama = document.getElementById("bank_nama_input").value;
+
+            if (metode == "Transfer Bank" && !bankNama) {
+                alert("Silakan pilih salah satu Bank (BCA/BRI/Mandiri) terlebih dahulu!");
+                return false;
+            }
+            return true;
+        };
     </script>
 </body>
 </html>
