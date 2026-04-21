@@ -17,7 +17,7 @@
                 <h5 class="fw-bold mb-3">LOKASI KAMI</h5>
                 <p class="small mb-2 d-flex align-items-start justify-content-center justify-content-md-start">
                     <i class="fa-solid fa-location-dot mt-1 me-2 text-warning"></i>
-                    <span>Jl. Bulurejo Jalan 12 Jombang,<br>Jawa Timur, Indonesia</span>
+                    <span>Jl. Bulurejo Nomor 12, Jombang,<br>Jawa Timur, Indonesia</span>
                 </p>
                 <p class="small d-flex align-items-center justify-content-center justify-content-md-start">
                     <i class="fa-solid fa-clock me-2 text-warning"></i>

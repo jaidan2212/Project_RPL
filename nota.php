@@ -99,7 +99,7 @@ $detail = $koneksi->query("SELECT * FROM pesanan_detail WHERE id_pesanan='$id_pe
           
           <div class="text-center mb-4 border-bottom pb-4">
               <h2 class="fw-bold text-velvet mb-1">☕ Kedaiku</h2>
-              <p class="text-muted mb-0">Jl. Telang Raya, Kamal, Bangkalan</p>
+              <p class="text-muted mb-0">Jl. Bulurejo Nomor 12, Jombang</p>
               <p class="text-muted small mt-2">No. Invoice: <strong class="text-dark">#INV-<?php echo str_pad($id_pesanan, 5, '0', STR_PAD_LEFT); ?></strong></p>
           </div>
 
