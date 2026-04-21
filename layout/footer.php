@@ -6,11 +6,6 @@
                     <img src="assets/gambar/logo.jpeg" height="40" class="me-2 rounded-circle"> KEDAIKU
                 </h4>
                 <p class="small opacity-75">Menyajikan biji kopi pilihan terbaik dari petani lokal untuk menghadirkan cita rasa kopi Indonesia yang autentik langsung ke tangan Anda.</p>
-                <div class="d-flex gap-3 justify-content-center justify-content-md-start fs-5 mt-3">
-                    <a href="#" class="text-white opacity-75"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#" class="text-white opacity-75"><i class="fa-brands fa-facebook"></i></a>
-                    <a href="#" class="text-white opacity-75"><i class="fa-brands fa-whatsapp"></i></a>
-                </div>
             </div>
 
             <div class="col-md-4">
@@ -26,12 +21,23 @@
             </div>
 
             <div class="col-md-3">
-                <h5 class="fw-bold mb-3">NAVIGASI</h5>
-                <ul class="list-unstyled small">
-                    <li class="mb-2"><a href="index.php" class="text-white text-decoration-none opacity-75">Beranda</a></li>
-                    <li class="mb-2"><a href="produk.php" class="text-white text-decoration-none opacity-75">Katalog Produk</a></li>
-                    <li class="mb-2"><a href="login.php" class="text-white text-decoration-none opacity-75">Masuk / Daftar</a></li>
-                </ul>
+                <h5 class="fw-bold mb-3">KEUNGGULAN</h5>
+                <div class="small">
+                    <div class="d-flex align-items-start justify-content-center justify-content-md-start mb-3">
+                        <i class="fa-solid fa-star me-2 text-warning mt-1"></i>
+                        <div>
+                            <span class="d-block fw-bold">Kualitas Premium</span>
+                            <span class="opacity-75">Biji kopi pilihan petani lokal.</span>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start justify-content-center justify-content-md-start">
+                        <i class="fa-solid fa-heart me-2 text-warning mt-1"></i>
+                        <div>
+                            <span class="d-block fw-bold">Pelayanan Ramah</span>
+                            <span class="opacity-75">Melayani dengan sepenuh hati.</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
