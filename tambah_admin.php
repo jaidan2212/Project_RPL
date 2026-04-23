@@ -105,7 +105,7 @@ if (isset($_POST['tambah_admin'])) {
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="admin.php">Pesanan</a></li>
                     <li class="nav-item"><a class="nav-link" href="kelola_produk.php">Daftar Produk</a></li>
-                    <li class="nav-item"><a class="nav-link" href="tambah_produk.php">Tambah Produk</a></li>
+                    <!-- <li class="nav-item"><a class="nav-link" href="tambah_produk.php">Tambah Produk</a></li> -->
                     <li class="nav-item"><a class="nav-link active" href="tambah_admin.php">Tambah Admin</a></li>
                     <li class="nav-item"><a class="nav-link text-warning fw-bold" href="logout.php">Logout</a></li>
                 </ul>

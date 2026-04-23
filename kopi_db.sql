@@ -19,6 +19,42 @@
 CREATE DATABASE IF NOT EXISTS `kopi_db` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `kopi_db`;
 
+-- Dumping structure for table kopi_db.produk
+CREATE TABLE IF NOT EXISTS `produk` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nama` varchar(100) DEFAULT NULL,
+  `harga` int DEFAULT NULL,
+  `gambar` varchar(200) DEFAULT NULL,
+  `stok` int NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Dumping data for table kopi_db.produk: ~6 rows (approximately)
+INSERT INTO `produk` (`id`, `nama`, `harga`, `gambar`, `stok`) VALUES
+	(1, 'Kopi Arabica', 75000, 'arabica.jpg', 49),
+	(2, 'Kopi Robusta', 60000, 'robusta.jpg', 50),
+	(3, 'Kopi Liberica', 85000, 'liberica.jpg', 50),
+	(4, 'Excelsa Wonosalam', 95000, 'excelsa.jpg', 50),
+	(5, 'Kopi Luwak Premium', 150000, 'luwak.jpg', 50),
+	(6, 'Kopi Decaf', 80000, 'decaf.jpg', 50);
+
+-- Dumping structure for table kopi_db.pesanan_header
+CREATE TABLE IF NOT EXISTS `pesanan_header` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nama` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `pembayaran` varchar(50) NOT NULL,
+  `tanggal` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `total` int NOT NULL,
+  `status` varchar(50) DEFAULT 'Menunggu Pembayaran',
+  `bukti` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Dumping data for table kopi_db.pesanan_header: ~1 rows (approximately)
+INSERT INTO `pesanan_header` (`id`, `nama`, `email`, `pembayaran`, `tanggal`, `total`, `status`, `bukti`) VALUES
+	(1, 'Dimas', 'fahdimas42@gmail.com', 'QRIS', '2026-04-02 06:26:10', 75000, 'Terverifikasi', 'BUKTI_1775111170_69ce0c02e4bec.png');
+
 -- Dumping structure for table kopi_db.pesanan_detail
 CREATE TABLE IF NOT EXISTS `pesanan_detail` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -38,41 +74,6 @@ CREATE TABLE IF NOT EXISTS `pesanan_detail` (
 INSERT INTO `pesanan_detail` (`id`, `id_pesanan`, `produk_id`, `jumlah`, `harga`, `subtotal`) VALUES
 	(1, 1, 1, 1, 75000, 75000);
 
--- Dumping structure for table kopi_db.pesanan_header
-CREATE TABLE IF NOT EXISTS `pesanan_header` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `nama` varchar(100) NOT NULL,
-  `email` varchar(100) NOT NULL,
-  `pembayaran` varchar(50) NOT NULL,
-  `tanggal` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `total` int NOT NULL,
-  `status` varchar(50) DEFAULT 'Menunggu Pembayaran',
-  `bukti` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- Dumping data for table kopi_db.pesanan_header: ~1 rows (approximately)
-INSERT INTO `pesanan_header` (`id`, `nama`, `email`, `pembayaran`, `tanggal`, `total`, `status`, `bukti`) VALUES
-	(1, 'Dimas', 'fahdimas42@gmail.com', 'QRIS', '2026-04-02 06:26:10', 75000, 'Terverifikasi', 'BUKTI_1775111170_69ce0c02e4bec.png');
-
--- Dumping structure for table kopi_db.produk
-CREATE TABLE IF NOT EXISTS `produk` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `nama` varchar(100) DEFAULT NULL,
-  `harga` int DEFAULT NULL,
-  `gambar` varchar(200) DEFAULT NULL,
-  `stok` int NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- Dumping data for table kopi_db.produk: ~6 rows (approximately)
-INSERT INTO `produk` (`id`, `nama`, `harga`, `gambar`, `stok`) VALUES
-	(1, 'Kopi Arabica', 75000, 'arabica.jpg', 49),
-	(2, 'Kopi Robusta', 60000, 'robusta.jpg', 50),
-	(3, 'Kopi Liberica', 85000, 'liberica.jpg', 50),
-	(4, 'Excelsa Wonosalam', 95000, 'excelsa.jpg', 50),
-	(5, 'Kopi Luwak Premium', 150000, 'luwak.jpg', 50),
-	(6, 'Kopi Decaf', 80000, 'decaf.jpg', 50);
 
 -- Dumping structure for table kopi_db.users
 CREATE TABLE IF NOT EXISTS `users` (
