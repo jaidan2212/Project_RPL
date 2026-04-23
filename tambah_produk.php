@@ -136,7 +136,7 @@ if (isset($_POST['simpan'])) {
               <label class="form-label fw-bold">Gambar Produk</label>
               <input type="file" name="gambar" class="form-control" required>
             </div>
-            <button type="submit" name="simpan" class="btn btn-danger w-100 fw-bold">Simpan Produk</button>
+            <button type="submit" name="simpan" class="btn btn-danger w-100 fw-bold">Simpan Produk</button>           
           </form>
         </div>
       </div>
