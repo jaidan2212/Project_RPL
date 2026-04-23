@@ -129,9 +129,8 @@ if (isset($_POST['login'])) {
             text-decoration: underline;
         }
 
-        /* Style khusus untuk Logo agar proporsional */
         .login-logo {
-            width: 80px; /* Atur ukuran logo di sini */
+            width: 80px;
             height: auto;
             margin-bottom: 15px;
         }
@@ -170,6 +169,9 @@ if (isset($_POST['login'])) {
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
                                 <input type="password" name="password" class="form-control" placeholder="Masukkan password" required>
+                            </div>
+                            <div class="text-end mt-1">
+                                <a href="lupa_password.php" class="small register-link" style="font-size: 0.8rem;">Lupa password?</a>
                             </div>
                         </div>
 

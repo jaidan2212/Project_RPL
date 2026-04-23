@@ -4,6 +4,7 @@ include 'koneksi.php';
 
 if (isset($_POST['register'])) {
     $username = mysqli_real_escape_string($koneksi, $_POST['username']);
+    $email = mysqli_real_escape_string($koneksi, $_POST['email']); // TAMBAHAN EMAIL
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     $role = "user";
 
@@ -16,8 +17,9 @@ if (isset($_POST['register'])) {
     $tmp = $_FILES['foto']['tmp_name'];
 
     if (move_uploaded_file($tmp, $uploadDir . $fotoName)) {
-        $sql = "INSERT INTO users (username, password, role, foto) 
-                VALUES ('$username', '$password', '$role', '$fotoName')";
+        // UPDATE QUERY: Menambahkan kolom email
+        $sql = "INSERT INTO users (username, email, password, role, foto) 
+                VALUES ('$username', '$email', '$password', '$role', '$fotoName')";
         if ($koneksi->query($sql)) {
             $success = "Akun berhasil dibuat! Silakan login.";
         } else {
@@ -173,6 +175,14 @@ if (isset($_POST['register'])) {
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
                                 <input type="text" name="username" class="form-control" placeholder="Pilih username" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Email</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
+                                <input type="email" name="email" class="form-control" placeholder="Masukkan email aktif" required>
                             </div>
                         </div>
 
