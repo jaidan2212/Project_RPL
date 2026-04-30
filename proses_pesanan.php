@@ -16,16 +16,30 @@ $pembayaran = mysqli_real_escape_string($koneksi, $_POST['pembayaran']);
 
 $total = 0;
 
-// 1. Hitung Total Harga
+// ==========================================================
+// 1. VALIDASI STOK & HITUNG TOTAL (Pagar Keamanan)
+// ==========================================================
 foreach ($produkDipilih as $id) {
     $produk = $koneksi->query("SELECT * FROM produk WHERE id='$id'")->fetch_assoc();
     if ($produk) {
         $qty = isset($jumlahDipilih[$id]) ? (int)$jumlahDipilih[$id] : 1;
+        
+        // Cek apakah stok di database mencukupi
+        if ($qty > $produk['stok']) {
+            echo "<script>
+                alert('Gagal! Stok " . $produk['nama'] . " tidak mencukupi. Sisa stok: " . $produk['stok'] . "');
+                window.location='produk.php'; 
+            </script>";
+            exit(); 
+        }
+        
         $total += ($produk['harga'] * $qty);
     }
 }
 
-// 2. Proses Upload Bukti (Cek Transfer Bank atau QRIS)
+// ==========================================================
+// 2. PROSES UPLOAD BUKTI (Tetap Sama)
+// ==========================================================
 $buktiName = "";
 $fileSource = null;
 
@@ -44,13 +58,17 @@ if ($fileSource) {
     move_uploaded_file($fileSource['tmp_name'], $uploadDir . $buktiName);
 }
 
-// 3. Simpan ke pesanan_header
+// ==========================================================
+// 3. SIMPAN KE pesanan_header (Tetap Sama)
+// ==========================================================
 $sql = "INSERT INTO pesanan_header (nama, email, pembayaran, tanggal, total, status, bukti) 
         VALUES ('$nama', '$email', '$pembayaran', NOW(), '$total', 'Menunggu Verifikasi', '$buktiName')";
 $koneksi->query($sql);
 $id_pesanan = $koneksi->insert_id;
 
-// 4. Simpan ke pesanan_detail & Update Stok
+// ==========================================================
+// 4. SIMPAN KE pesanan_detail & UPDATE STOK (Tetap Sama)
+// ==========================================================
 foreach ($produkDipilih as $id) {
     $produk = $koneksi->query("SELECT * FROM produk WHERE id='$id'")->fetch_assoc();
     if ($produk) {
@@ -61,7 +79,7 @@ foreach ($produkDipilih as $id) {
                       VALUES ('$id_pesanan', '$id', '$qty', '" . $produk['harga'] . "', '$subtotal')";
         $koneksi->query($sqlDetail);
 
-        // Kurangi Stok
+        // Kurangi Stok di Database
         $stokBaru = $produk['stok'] - $qty;
         $koneksi->query("UPDATE produk SET stok='$stokBaru' WHERE id='$id'");
     }
@@ -79,7 +97,7 @@ foreach ($produkDipilih as $id) {
     
     <style>
         body {
-            background: #c7b7a3; /* Tema Kedaiku */
+            background: #c7b7a3; 
             font-family: 'Poppins', sans-serif;
             min-height: 100vh;
         }

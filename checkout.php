@@ -11,11 +11,30 @@ if (!isset($_SESSION['username'])) {
 $produkDipilih = isset($_POST['produk_id']) ? $_POST['produk_id'] : [];
 $jumlahDipilih = isset($_POST['jumlah']) ? $_POST['jumlah'] : [];
 
+// ==========================================================
+// LOGIKA GATEKEEPER: VALIDASI STOK SEBELUM MASUK CHECKOUT
+// ==========================================================
+foreach ($produkDipilih as $id) {
+    $cekStok = $koneksi->query("SELECT nama, stok FROM produk WHERE id='$id'")->fetch_assoc();
+    if ($cekStok) {
+        $qtyInput = isset($jumlahDipilih[$id]) ? (int)$jumlahDipilih[$id] : 1;
+        
+        // Jika jumlah yang diinput di produk.php melebihi stok di database
+        if ($qtyInput > $cekStok['stok']) {
+            echo "<script>
+                alert('Maaf, stok " . $cekStok['nama'] . " tidak mencukupi! (Tersedia: " . $cekStok['stok'] . ")');
+                window.location='produk.php';
+            </script>";
+            exit(); // Hentikan script, user tidak bisa melihat halaman checkout
+        }
+    }
+}
+// ==========================================================
+
 $daftarProduk = [];
 $total = 0;
 
 foreach ($produkDipilih as $id) {
-    // Tetap pakai query database asli kamu
     $produk = $koneksi->query("SELECT * FROM produk WHERE id='$id'")->fetch_assoc();
     if ($produk) {
         $qty = isset($jumlahDipilih[$id]) ? (int)$jumlahDipilih[$id] : 1;
@@ -247,16 +266,13 @@ foreach ($produkDipilih as $id) {
             var inputQris = document.getElementById("bukti_qris");
             var inputBank = document.getElementById("bukti_transfer");
 
-            // Reset tampilan
             bankSection.style.display = (metode == "Transfer Bank") ? "block" : "none";
             ewalletSection.style.display = (metode == "QRIS") ? "block" : "none";
             document.getElementById("detail_rekening").style.display = "none";
             
-            // Reset required
             inputQris.required = false;
             inputBank.required = false;
 
-            // Jika QRIS, maka input bukti QRIS wajib diisi
             if (metode == "QRIS") {
                 inputQris.required = true;
             }
@@ -264,7 +280,7 @@ foreach ($produkDipilih as $id) {
 
         function pilihBank(bank) {
             document.getElementById("detail_rekening").style.display = "block";
-            document.getElementById("bukti_transfer").required = true; // Wajib upload jika bank dipilih
+            document.getElementById("bukti_transfer").required = true; 
             document.getElementById("bank_nama_input").value = bank;
 
             var options = document.getElementsByClassName("bank-option");
@@ -285,7 +301,6 @@ foreach ($produkDipilih as $id) {
             }
         }
 
-        // Validasi Tambahan saat Submit
         document.getElementById("formCheckout").onsubmit = function() {
             var metode = document.getElementById("metode_pembayaran").value;
             var bankNama = document.getElementById("bank_nama_input").value;
