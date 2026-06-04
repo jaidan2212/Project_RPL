@@ -2,7 +2,24 @@
 session_start();
 include 'koneksi.php';
 
-// Pastikan ada data yang dikirim
+// ==========================================================
+// 0. ANTI DOUBLE SUBMIT (WAJIB)
+// ==========================================================
+if (isset($_SESSION['order_done']) && $_SESSION['order_done'] === true) {
+    header("Location: index.php");
+    exit();
+}
+
+if (isset($_SESSION['last_order_time']) && time() - $_SESSION['last_order_time'] < 3) {
+    header("Location: produk.php");
+    exit();
+}
+
+$_SESSION['last_order_time'] = time();
+
+// ==========================================================
+// 1. VALIDASI INPUT
+// ==========================================================
 if (!isset($_POST['produk_id']) || !isset($_POST['nama'])) {
     header("Location: produk.php");
     exit();
@@ -10,6 +27,7 @@ if (!isset($_POST['produk_id']) || !isset($_POST['nama'])) {
 
 $produkDipilih = $_POST['produk_id'];
 $jumlahDipilih = $_POST['jumlah'];
+
 $nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
 $email = mysqli_real_escape_string($koneksi, $_POST['email']);
 $pembayaran = mysqli_real_escape_string($koneksi, $_POST['pembayaran']);
@@ -17,28 +35,28 @@ $pembayaran = mysqli_real_escape_string($koneksi, $_POST['pembayaran']);
 $total = 0;
 
 // ==========================================================
-// 1. VALIDASI STOK & HITUNG TOTAL (Pagar Keamanan)
+// 2. CEK STOK + HITUNG TOTAL
 // ==========================================================
 foreach ($produkDipilih as $id) {
     $produk = $koneksi->query("SELECT * FROM produk WHERE id='$id'")->fetch_assoc();
+
     if ($produk) {
         $qty = isset($jumlahDipilih[$id]) ? (int)$jumlahDipilih[$id] : 1;
-        
-        // Cek apakah stok di database mencukupi
+
         if ($qty > $produk['stok']) {
             echo "<script>
-                alert('Gagal! Stok " . $produk['nama'] . " tidak mencukupi. Sisa stok: " . $produk['stok'] . "');
-                window.location='produk.php'; 
+                alert('Stok {$produk['nama']} tidak mencukupi!');
+                window.location='produk.php';
             </script>";
-            exit(); 
+            exit();
         }
-        
-        $total += ($produk['harga'] * $qty);
+
+        $total += $produk['harga'] * $qty;
     }
 }
 
 // ==========================================================
-// 2. PROSES UPLOAD BUKTI (Tetap Sama)
+// 3. UPLOAD BUKTI
 // ==========================================================
 $buktiName = "";
 $fileSource = null;
@@ -53,38 +71,56 @@ if ($fileSource) {
     $uploadDir = "assets/gambar/";
     if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
 
-    $extension = pathinfo($fileSource['name'], PATHINFO_EXTENSION);
-    $buktiName = "BUKTI_" . time() . "_" . uniqid() . "." . $extension;
+    $ext = pathinfo($fileSource['name'], PATHINFO_EXTENSION);
+    $buktiName = "BUKTI_" . time() . "_" . uniqid() . "." . $ext;
+
     move_uploaded_file($fileSource['tmp_name'], $uploadDir . $buktiName);
 }
 
 // ==========================================================
-// 3. SIMPAN KE pesanan_header (Tetap Sama)
+// 4. SIMPAN HEADER
 // ==========================================================
-$sql = "INSERT INTO pesanan_header (nama, email, pembayaran, tanggal, total, status, bukti) 
-        VALUES ('$nama', '$email', '$pembayaran', NOW(), '$total', 'Menunggu Verifikasi', '$buktiName')";
-$koneksi->query($sql);
+$koneksi->query("
+    INSERT INTO pesanan_header 
+    (nama, email, pembayaran, tanggal, total, status, bukti) 
+    VALUES 
+    ('$nama', '$email', '$pembayaran', NOW(), '$total', 'pending', '$buktiName')
+");
+
 $id_pesanan = $koneksi->insert_id;
 
 // ==========================================================
-// 4. SIMPAN KE pesanan_detail & UPDATE STOK (Tetap Sama)
+// 5. SIMPAN DETAIL
 // ==========================================================
 foreach ($produkDipilih as $id) {
     $produk = $koneksi->query("SELECT * FROM produk WHERE id='$id'")->fetch_assoc();
+
     if ($produk) {
         $qty = isset($jumlahDipilih[$id]) ? (int)$jumlahDipilih[$id] : 1;
         $subtotal = $produk['harga'] * $qty;
 
-        $sqlDetail = "INSERT INTO pesanan_detail (id_pesanan, produk_id, jumlah, harga, subtotal) 
-                      VALUES ('$id_pesanan', '$id', '$qty', '" . $produk['harga'] . "', '$subtotal')";
-        $koneksi->query($sqlDetail);
-
-        // Kurangi Stok di Database
-        $stokBaru = $produk['stok'] - $qty;
-        $koneksi->query("UPDATE produk SET stok='$stokBaru' WHERE id='$id'");
+        $koneksi->query("
+            INSERT INTO pesanan_detail 
+            (id_pesanan, produk_id, jumlah, harga, subtotal)
+            VALUES 
+            ('$id_pesanan', '$id', '$qty', '{$produk['harga']}', '$subtotal')
+        ");
     }
 }
+
+// ==========================================================
+// 6. SET SESSION (ANTI DOUBLE + TRACK ORDER)
+// ==========================================================
+$_SESSION['order_done'] = true;
+$_SESSION['last_order_id'] = $id_pesanan;
+
+// ==========================================================
+// 7. AMBIL STATUS REAL (PENTING UNTUK NOTA)
+// ==========================================================
+$cek = $koneksi->query("SELECT status FROM pesanan_header WHERE id='$id_pesanan'")->fetch_assoc();
+$status = strtolower($cek['status']);
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -170,12 +206,29 @@ foreach ($produkDipilih as $id) {
                     </div>
 
                     <div class="d-grid gap-3">
-                        <a href="cetak_pdf.php?id=<?php echo $id_pesanan; ?>" target="_blank" class="btn btn-print btn-lg fw-bold py-3 rounded-pill">
+
+                    <?php if ($status == 'lunas') { ?>
+
+                        <a href="cetak_pdf.php?id=<?php echo $id_pesanan; ?>" 
+                        target="_blank" 
+                        class="btn btn-print btn-lg fw-bold py-3 rounded-pill">
                             <i class="fa-solid fa-file-pdf me-2"></i> Download Nota Digital (PDF)
                         </a>
-                        <a href="index.php" class="btn btn-outline-secondary btn-lg rounded-pill">
-                            <i class="fa-solid fa-house me-2"></i> Kembali ke Beranda
-                        </a>
+
+                    <?php } else { ?>
+
+                        <div class="btn btn-secondary btn-lg rounded-pill fw-bold py-3 disabled">
+                            ⏳ Menunggu Verifikasi Admin untuk Cetak Nota
+                        </div>
+
+                    <?php } ?>
+
+                    </div>
+
+                    <a href="index.php" class="btn btn-outline-secondary btn-lg rounded-pill">
+                        <i class="fa-solid fa-house me-2"></i> Kembali ke Beranda
+                    </a>
+
                     </div>
                 </div>
                 

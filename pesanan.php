@@ -111,12 +111,22 @@ $username_login = $_SESSION['username'];
                         $detail = $query_detail->fetch_assoc();
                         
                         // Cek status pesanan (default 'Diproses' jika belum ada field status)
-                        $status = isset($row['status']) ? $row['status'] : 'Diproses';
-                        $warna_status = (strtolower($status) == 'selesai') ? 'text-success' : 'text-warning';
+                        $status = $row['status'] ?? 'pending';
+
+                        if ($status == 'lunas') {
+                            $warna_status = 'text-success';
+                            $label_status = 'Lunas';
+                        } elseif ($status == 'ditolak') {
+                            $warna_status = 'text-danger';
+                            $label_status = 'Ditolak';
+                        } else {
+                            $warna_status = 'text-warning';
+                            $label_status = 'Menunggu Verifikasi';
+                        }
                 ?>
                     <div class="card card-pesanan">
                         <div class="card-pesanan-header d-flex justify-content-between align-items-center">
-                            <span>Status: <span class="<?php echo $warna_status; ?> fw-bold"><?php echo $status; ?></span></span>
+                            <span>Status: <span class="<?php echo $warna_status; ?> fw-bold"><?php echo $label_status; ?></span></span>
                             <span class="small text-muted">Tanggal: <?php echo date('d M Y, H:i', strtotime($row['tanggal'])); ?></span>
                         </div>
                         <div class="card-body">
@@ -145,10 +155,19 @@ $username_login = $_SESSION['username'];
                                 </div>
                                 
                                 <div class="col-md-3 text-md-end text-center mt-3 mt-md-0 d-flex flex-column gap-2">
-                                    <a href="nota.php?id=<?php echo $id_pesanan; ?>" class="btn btn-outline-secondary w-100 fw-bold">
-                                        <i class="fa-solid fa-receipt me-1"></i> Lihat Nota
-                                    </a>
+
+                                    <?php if ($status == 'lunas') { ?>
+                                        <a href="nota.php?id=<?php echo $id_pesanan; ?>" class="btn btn-outline-secondary w-100 fw-bold">
+                                            <i class="fa-solid fa-receipt me-1"></i> Lihat Nota
+                                        </a>
+                                    <?php } else { ?>
+                                        <button class="btn btn-secondary w-100 fw-bold" disabled>
+                                            Menunggu Verifikasi Admin
+                                        </button>
+                                    <?php } ?>
+
                                     <a href="produk.php" class="btn btn-outline-main w-100">Beli Lagi</a>
+
                                 </div>
                             </div>
                         </div>

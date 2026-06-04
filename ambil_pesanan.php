@@ -7,12 +7,13 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
     exit;
 }
 
-$id = $_GET['id'];
+$id = (int) $_GET['id'];
 
-// hanya boleh kalau sudah lunas
-$cek = $koneksi->query("SELECT status FROM pesanan_header WHERE id='$id'")->fetch_assoc();
+$cek = $koneksi->query("SELECT pengambilan FROM pesanan_header WHERE id='$id'")->fetch_assoc();
 
-if ($cek && $cek['status'] == 'lunas') {
+if ($cek['pengambilan'] == 'diambil') {
+    $koneksi->query("UPDATE pesanan_header SET pengambilan='belum' WHERE id='$id'");
+} else {
     $koneksi->query("UPDATE pesanan_header SET pengambilan='diambil' WHERE id='$id'");
 }
 

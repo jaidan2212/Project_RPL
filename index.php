@@ -1,6 +1,9 @@
 <?php
 session_start();
 include 'koneksi.php';
+
+unset($_SESSION['order_done']);
+unset($_SESSION['last_order_id']);
 ?>
 <!DOCTYPE html>
 <html lang="id">

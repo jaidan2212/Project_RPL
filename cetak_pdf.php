@@ -6,6 +6,15 @@ $id_pesanan = $_GET['id'];
 $header = $koneksi->query("SELECT * FROM pesanan_header WHERE id='$id_pesanan'")->fetch_assoc();
 
 $detail = $koneksi->query("SELECT * FROM pesanan_detail WHERE id_pesanan='$id_pesanan'");
+
+if ($header['status'] != 'lunas') {
+    echo "<script>
+        alert('Pesanan belum diverifikasi admin');
+        window.location='pesanan.php';
+    </script>";
+    exit;
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="id">

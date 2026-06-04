@@ -228,7 +228,9 @@ foreach ($produkDipilih as $id) {
 
                             <div id="detail_rekening" style="display:none;" class="box-pembayaran border border-info mb-4 shadow-sm text-start">
                                 <h5 id="nama_bank" class="text-info mb-1"></h5>
-                                <h4 id="no_rek" class="fw-bold mb-3"></h4>
+                                <h4  class="fw-bold mb-3">
+                                    <span id="no_rek"></span> - <span id="atas_nama"></span>
+                                </h4>
                                 <label class="form-label small">Upload Bukti Transfer (Wajib)</label>
                                 <input type="file" name="bukti_transfer" id="bukti_transfer" class="form-control" accept="image/*">
                             </div>
@@ -289,14 +291,17 @@ foreach ($produkDipilih as $id) {
             if (bank == "BCA") {
                 document.getElementById("nama_bank").innerText = "Bank BCA";
                 document.getElementById("no_rek").innerText = "1234 5678 90";
+                document.getElementById("atas_nama").innerText = "A.N KEDAIKU";
                 document.getElementById("bank_bca").classList.add("active");
             } else if (bank == "BRI") {
                 document.getElementById("nama_bank").innerText = "Bank BRI";
                 document.getElementById("no_rek").innerText = "9876 5432 10";
+                document.getElementById("atas_nama").innerText = "A.N KEDAIKU";
                 document.getElementById("bank_bri").classList.add("active");
             } else if (bank == "Mandiri") {
                 document.getElementById("nama_bank").innerText = "Bank Mandiri";
                 document.getElementById("no_rek").innerText = "1122 3344 55";
+                document.getElementById("atas_nama").innerText = "A.N KEDAIKU";
                 document.getElementById("bank_mandiri").classList.add("active");
             }
         }

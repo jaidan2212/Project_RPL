@@ -53,7 +53,8 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
         .card-admin {
             background: #e8d8c4;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
+            width: 100%;
         }
 
         .table {
@@ -68,7 +69,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
         }
 
         .table tbody tr {
-            background: #f1e4d3;
+            /* background: #f1e4d3; */
         }
 
         .table tbody tr:hover {
@@ -116,70 +117,123 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
         </div>
     </nav>
 
-    <div class="container my-5">
+    <div class="container-fluid my-5 px-5">
         <h2 class="mb-4 admin-title">Daftar Pesanan Masuk</h2>
 
-        <div class="card card-admin p-4 shadow-sm">
+        <div class="card card-admin p-4 shadow-sm w-100">
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th>Nama</th>
+                            <th>Pesanan</th>
                             <th>Pembayaran</th>
                             <th>Total Tagihan</th>
                             <th>Tanggal</th>
                             <th>Bukti Transfer</th>
                             <th>Status</th>
-                            <th>Aksi</th>
+                            <th>Aksi</th>                           
+                            <th>Pengambilan</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
                         $query = $koneksi->query("SELECT * FROM pesanan_header ORDER BY id DESC");
-
+                        
                         if ($query->num_rows > 0) {
                             while ($row = $query->fetch_assoc()) {
-                                $status = $row['status'] ?? 'Menunggu Pembayaran';
+                                $status = strtolower(trim($row['status']));
                                 
                                 // Penentuan warna badge
-                                if ($status == 'Terverifikasi') {
+                                if ($status == 'lunas') {
+                                    $state = 'lunas';
                                     $badgeColor = 'bg-success';
-                                } elseif ($status == 'Dibatalkan') {
+                                } elseif ($status == 'dibatalkan') {
+                                    $state = 'dibatalkan';
                                     $badgeColor = 'bg-danger';
                                 } else {
+                                    $state = 'pending';
                                     $badgeColor = 'bg-warning text-dark';
                                 }
                         ?>
                                 <tr>
                                     <td class="fw-bold">#<?php echo $row['id']; ?></td>
                                     <td><?php echo htmlspecialchars($row['nama']); ?></td>
+                                    <td>
+                                        <?php
+                                        $detail = $koneksi->query("
+                                            SELECT p.nama, pd.jumlah 
+                                            FROM pesanan_detail pd 
+                                            JOIN produk p ON pd.produk_id = p.id 
+                                            WHERE pd.id_pesanan = '".$row['id']."'
+                                        ");
+
+                                        while ($d = $detail->fetch_assoc()) {
+                                            echo "<small>• ".$d['nama']." (".$d['jumlah'].")</small><br>";
+                                        }
+                                        ?>
+                                        </td>
                                     <td><?php echo htmlspecialchars($row['pembayaran']); ?></td>
                                     <td class="fw-bold text-danger">
                                         Rp <?php echo number_format($row['total'], 0, ',', '.'); ?>
                                     </td>
                                     <td><?php echo date('d-m-Y H:i', strtotime($row['tanggal'])); ?></td>
                                     <td>
-                                        <?php if (!empty($row['bukti'])) { ?>
-                                            <a href="assets/gambar/<?php echo $row['bukti']; ?>" target="_blank" class="btn btn-outline-info btn-sm fw-bold">Lihat Bukti 📄</a>
-                                        <?php } else { echo "<span class='text-muted small'>Tidak Ada</span>"; } ?>
+                                        <a href="lihat_bukti.php?file=<?php echo $row['bukti']; ?>" target="_blank" class="btn btn-outline-info btn-sm fw-bold">
+                                            Lihat Bukti 📄
+                                        </a>
                                     </td>
                                     <td><span class="badge <?php echo $badgeColor; ?>"><?php echo $status; ?></span></td>
                                     <td>
-                                        <?php if ($status != 'Terverifikasi' && $status != 'Dibatalkan') { ?>
-                                            <a href="verifikasi_pesanan.php?id=<?php echo $row['id']; ?>" 
-                                               class="btn btn-success btn-sm fw-bold mb-1" 
-                                               onclick="return confirm('Verifikasi pembayaran pesanan #<?php echo $row['id']; ?>?');">
-                                               Verifikasi ✓
-                                            </a>
-                                            
+                                        <?php if ($status == 'lunas') { ?>
+
                                             <a href="batal_pesanan.php?id=<?php echo $row['id']; ?>" 
-                                               class="btn btn-danger btn-sm fw-bold mb-1" 
-                                               onclick="return confirm('Apakah Anda yakin ingin MEMBATALKAN pesanan #<?php echo $row['id']; ?>?');">
-                                               Batalkan ✕
+                                            class="btn btn-danger btn-sm px-2 py-1 small fw-bold mb-1"
+                                            onclick="return confirm('Batalkan pesanan #<?php echo $row['id']; ?>?');">
+                                                Batalkan ✕
                                             </a>
+
+                                        <?php } elseif ($status == 'dibatalkan') { ?>
+
+                                            <a href="verifikasi_pesanan.php?id=<?php echo $row['id']; ?>" 
+                                            class="btn btn-secondary btn-sm px-2 py-1 small fw-bold mb-1"
+                                            onclick="return confirm('Verifikasi ulang pesanan #<?php echo $row['id']; ?>?');">
+                                                Verifikasi Ulang ✓
+                                            </a>
+
                                         <?php } else { ?>
-                                            <button class="btn btn-secondary btn-sm fw-bold" disabled>Selesai</button>
+
+                                            <a href="verifikasi_pesanan.php?id=<?php echo $row['id']; ?>" 
+                                            class="btn btn-secondary btn-sm px-2 py-1 small fw-bold mb-1"
+                                            onclick="return confirm('Verifikasi pesanan #<?php echo $row['id']; ?>?');">
+                                                Verifikasi ✓
+                                            </a>
+
+                                            <a href="batal_pesanan.php?id=<?php echo $row['id']; ?>" 
+                                            class="btn btn-danger btn-sm px-2 py-1 small fw-bold mb-1"
+                                            onclick="return confirm('Batalkan pesanan #<?php echo $row['id']; ?>?');">
+                                                Batalkan ✕
+                                            </a>
+
+                                        <?php } ?>
+                                    </td>
+                                    <td>
+                                        <?php if ($row['status'] == 'lunas') { ?>
+
+                                            <?php if ($row['pengambilan'] == 'diambil') { ?>
+                                                <span class="badge bg-success px-2 py-1 small">Sudah Diambil</span>
+
+                                            <?php } else { ?>
+                                                <a href="ambil_pesanan.php?id=<?php echo $row['id']; ?>" 
+                                                class="btn btn-primary btn-sm px-2 py-1 small fw-bold"
+                                                onclick="return confirm('Tandai pesanan ini sudah diambil?');">
+                                                    Tandai Diambil
+                                                </a>
+                                            <?php } ?>
+
+                                        <?php } else { ?>
+                                            <span>-</span>
                                         <?php } ?>
                                     </td>
                                 </tr>

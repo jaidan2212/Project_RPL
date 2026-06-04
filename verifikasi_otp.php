@@ -10,11 +10,9 @@ include 'layout/header.php';
 <head>
     <meta charset="UTF-8">
     <title>Verifikasi OTP - Kedaiku Coffee Shop</title>
-
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-
     <style>
         body {
             background: #c7b7a3;
