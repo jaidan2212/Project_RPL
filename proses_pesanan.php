@@ -2,123 +2,107 @@
 session_start();
 include 'koneksi.php';
 
-// ==========================================================
-// 0. ANTI DOUBLE SUBMIT (WAJIB)
-// ==========================================================
-if (isset($_SESSION['order_done']) && $_SESSION['order_done'] === true) {
-    header("Location: index.php");
-    exit();
-}
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-if (isset($_SESSION['last_order_time']) && time() - $_SESSION['last_order_time'] < 3) {
-    header("Location: produk.php");
-    exit();
-}
+    $produkDipilih = $_POST['produk_id'];
+    $jumlahDipilih = $_POST['jumlah'];
 
-$_SESSION['last_order_time'] = time();
+    $nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
+    $email = mysqli_real_escape_string($koneksi, $_POST['email']);
+    $pembayaran = mysqli_real_escape_string($koneksi, $_POST['pembayaran']);
 
-// ==========================================================
-// 1. VALIDASI INPUT
-// ==========================================================
-if (!isset($_POST['produk_id']) || !isset($_POST['nama'])) {
-    header("Location: produk.php");
-    exit();
-}
+    $total = $_POST['total_harga'];
 
-$produkDipilih = $_POST['produk_id'];
-$jumlahDipilih = $_POST['jumlah'];
+    $buktiName = '';
 
-$nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
-$email = mysqli_real_escape_string($koneksi, $_POST['email']);
-$pembayaran = mysqli_real_escape_string($koneksi, $_POST['pembayaran']);
+    // upload bukti
+    if (isset($_FILES['bukti_transfer']) && $_FILES['bukti_transfer']['error'] == 0) {
 
-$total = 0;
+        $ext = pathinfo($_FILES['bukti_transfer']['name'], PATHINFO_EXTENSION);
 
-// ==========================================================
-// 2. CEK STOK + HITUNG TOTAL
-// ==========================================================
-foreach ($produkDipilih as $id) {
-    $produk = $koneksi->query("SELECT * FROM produk WHERE id='$id'")->fetch_assoc();
+        $buktiName = 'BUKTI_' . time() . '.' . $ext;
 
-    if ($produk) {
-        $qty = isset($jumlahDipilih[$id]) ? (int)$jumlahDipilih[$id] : 1;
+        move_uploaded_file(
+            $_FILES['bukti_transfer']['tmp_name'],
+            'assets/gambar/' . $buktiName
+        );
 
-        if ($qty > $produk['stok']) {
-            echo "<script>
-                alert('Stok {$produk['nama']} tidak mencukupi!');
-                window.location='produk.php';
-            </script>";
-            exit();
-        }
+    } elseif (isset($_FILES['bukti_qris']) && $_FILES['bukti_qris']['error'] == 0) {
 
-        $total += $produk['harga'] * $qty;
+        $ext = pathinfo($_FILES['bukti_qris']['name'], PATHINFO_EXTENSION);
+
+        $buktiName = 'BUKTI_' . time() . '.' . $ext;
+
+        move_uploaded_file(
+            $_FILES['bukti_qris']['tmp_name'],
+            'assets/gambar/' . $buktiName
+        );
     }
-}
 
-// ==========================================================
-// 3. UPLOAD BUKTI
-// ==========================================================
-$buktiName = "";
-$fileSource = null;
+    // =========================
+    // SIMPAN HEADER
+    // =========================
 
-if (isset($_FILES['bukti_transfer']) && $_FILES['bukti_transfer']['error'] == 0) {
-    $fileSource = $_FILES['bukti_transfer'];
-} elseif (isset($_FILES['bukti_qris']) && $_FILES['bukti_qris']['error'] == 0) {
-    $fileSource = $_FILES['bukti_qris'];
-}
+    $koneksi->query("
+        INSERT INTO pesanan_header
+        (nama,email,pembayaran,tanggal,total,status,bukti)
+        VALUES
+        ('$nama','$email','$pembayaran',NOW(),'$total','pending','$buktiName')
+    ");
 
-if ($fileSource) {
-    $uploadDir = "assets/gambar/";
-    if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+    $id_pesanan = $koneksi->insert_id;
 
-    $ext = pathinfo($fileSource['name'], PATHINFO_EXTENSION);
-    $buktiName = "BUKTI_" . time() . "_" . uniqid() . "." . $ext;
+    // =========================
+    // SIMPAN DETAIL
+    // =========================
 
-    move_uploaded_file($fileSource['tmp_name'], $uploadDir . $buktiName);
-}
+    foreach ($produkDipilih as $id) {
 
-// ==========================================================
-// 4. SIMPAN HEADER
-// ==========================================================
-$koneksi->query("
-    INSERT INTO pesanan_header 
-    (nama, email, pembayaran, tanggal, total, status, bukti) 
-    VALUES 
-    ('$nama', '$email', '$pembayaran', NOW(), '$total', 'pending', '$buktiName')
-");
+        $produk = $koneksi->query("
+            SELECT * FROM produk
+            WHERE id='$id'
+        ")->fetch_assoc();
 
-$id_pesanan = $koneksi->insert_id;
-
-// ==========================================================
-// 5. SIMPAN DETAIL
-// ==========================================================
-foreach ($produkDipilih as $id) {
-    $produk = $koneksi->query("SELECT * FROM produk WHERE id='$id'")->fetch_assoc();
-
-    if ($produk) {
-        $qty = isset($jumlahDipilih[$id]) ? (int)$jumlahDipilih[$id] : 1;
+        $qty = (int)$jumlahDipilih[$id];
         $subtotal = $produk['harga'] * $qty;
 
         $koneksi->query("
-            INSERT INTO pesanan_detail 
-            (id_pesanan, produk_id, jumlah, harga, subtotal)
-            VALUES 
-            ('$id_pesanan', '$id', '$qty', '{$produk['harga']}', '$subtotal')
+            INSERT INTO pesanan_detail
+            (id_pesanan,produk_id,jumlah,harga,subtotal)
+            VALUES
+            ('$id_pesanan','$id','$qty',
+            '{$produk['harga']}','$subtotal')
         ");
     }
+
+    // PENTING: REDIRECT AGAR TIDAK DOBEL SAAT REFRESH
+    header("Location: proses_pesanan.php?id=".$id_pesanan);
+    exit();
 }
 
-// ==========================================================
-// 6. SET SESSION (ANTI DOUBLE + TRACK ORDER)
-// ==========================================================
-$_SESSION['order_done'] = true;
-$_SESSION['last_order_id'] = $id_pesanan;
+// =========================
+// MODE TAMPIL HALAMAN
+// =========================
 
-// ==========================================================
-// 7. AMBIL STATUS REAL (PENTING UNTUK NOTA)
-// ==========================================================
-$cek = $koneksi->query("SELECT status FROM pesanan_header WHERE id='$id_pesanan'")->fetch_assoc();
-$status = strtolower($cek['status']);
+if (!isset($_GET['id'])) {
+    header("Location: produk.php");
+    exit();
+}
+
+$id_pesanan = (int)$_GET['id'];
+
+$cek = $koneksi->query("
+    SELECT *
+    FROM pesanan_header
+    WHERE id='$id_pesanan'
+")->fetch_assoc();
+
+if (!$cek) {
+    die("Pesanan tidak ditemukan");
+}
+
+$nama = $cek['nama'];
+$status = strtolower(trim($cek['status']));
 ?>
 
 <!DOCTYPE html>
