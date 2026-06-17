@@ -8,11 +8,27 @@ if (!isset($_SESSION['username'])) {
 }
 
 $username_skrg = $_SESSION['username'];
-$query = $koneksi->query("SELECT * FROM users WHERE username='$username_skrg'");
-$user = $query->fetch_assoc();
+
+// Menggunakan Prepared Statement agar lebih aman dari SQL Injection & bug karakter
+$stmt = $koneksi->prepare("SELECT * FROM users WHERE username = ?");
+$stmt->bind_param("s", $username_skrg);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    $user = $result->fetch_assoc();
+} else {
+    // JIKA USER TIDAK DITEMUKAN DI DATABASE:
+    // Paksa logout atau hancurkan session agar user diminta login ulang secara bersih
+    session_destroy();
+    header("Location: login.php?error=user_not_found");
+    exit();
+}
+$stmt->close();
 ?>
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <title>Profil Akun - Kedaiku</title>
@@ -21,18 +37,73 @@ $user = $query->fetch_assoc();
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #c7b7a3; color: #333; }
-        .bg-velvet { background-color: #561c24 !important; color: white !important; }
-        .text-velvet { color: #561c24 !important; }
-        .list-group-item { font-weight: 600; border: 1px solid #e8d8c4; padding: 15px 20px; color: #561c24; }
-        .list-group-item:hover { background-color: #e8d8c4; }
-        .list-group-item.active { background-color: #561c24 !important; border-color: #561c24 !important; color: white; }
-        .card-profil { background: #fff; border: none; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        .btn-main { background-color: #6d2932; color: white; font-weight: 600; border: none; padding: 10px 25px; border-radius: 5px; transition: 0.3s; }
-        .btn-main:hover { background-color: #561c24; color: white; transform: translateY(-2px); }
-        .preview-foto { width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 4px solid #e8d8c4; margin-bottom: 10px; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #c7b7a3;
+            color: #333;
+        }
+
+        .bg-velvet {
+            background-color: #561c24 !important;
+            color: white !important;
+        }
+
+        .text-velvet {
+            color: #561c24 !important;
+        }
+
+        .list-group-item {
+            font-weight: 600;
+            border: 1px solid #e8d8c4;
+            padding: 15px 20px;
+            color: #561c24;
+        }
+
+        .list-group-item:hover {
+            background-color: #e8d8c4;
+        }
+
+        .list-group-item.active {
+            background-color: #561c24 !important;
+            border-color: #561c24 !important;
+            color: white;
+        }
+
+        .card-profil {
+            background: #fff;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .btn-main {
+            background-color: #6d2932;
+            color: white;
+            font-weight: 600;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        .btn-main:hover {
+            background-color: #561c24;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .preview-foto {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid #e8d8c4;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
+
 <body class="d-flex flex-column min-vh-100">
     <?php include 'layout/header.php'; ?>
     <div class="container my-5 flex-grow-1">
@@ -46,14 +117,14 @@ $user = $query->fetch_assoc();
                 </div>
             </div>
             <div class="col-md-9">
-                <?php if(isset($_GET['status'])): ?>
-                    <?php if($_GET['status'] == 'success'): ?>
+                <?php if (isset($_GET['status'])): ?>
+                    <?php if ($_GET['status'] == 'success'): ?>
                         <div class="alert alert-success alert-dismissible fade show"><strong>Berhasil!</strong> Data profil telah diperbarui.<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-                    <?php elseif($_GET['status'] == 'pass_success'): ?>
+                    <?php elseif ($_GET['status'] == 'pass_success'): ?>
                         <div class="alert alert-success alert-dismissible fade show"><strong>Berhasil!</strong> Password telah diubah.<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-                    <?php elseif($_GET['status'] == 'pass_mismatch'): ?>
+                    <?php elseif ($_GET['status'] == 'pass_mismatch'): ?>
                         <div class="alert alert-danger alert-dismissible fade show"><strong>Gagal!</strong> Konfirmasi password tidak cocok.<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-                    <?php elseif($_GET['status'] == 'old_wrong'): ?>
+                    <?php elseif ($_GET['status'] == 'old_wrong'): ?>
                         <div class="alert alert-danger alert-dismissible fade show"><strong>Gagal!</strong> Password lama salah.<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
                     <?php endif; ?>
                 <?php endif; ?>
@@ -104,4 +175,5 @@ $user = $query->fetch_assoc();
     <?php include 'layout/footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

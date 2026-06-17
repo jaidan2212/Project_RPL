@@ -219,9 +219,13 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
                                         <?php } ?>
                                     </td>
                                     <td>
-                                        <?php if ($row['status'] == 'lunas') { ?>
+                                        <?php if ($status == 'lunas') { ?>
 
-                                            <?php if ($row['pengambilan'] == 'diambil') { ?>
+                                            <?php 
+                                            // Menggunakan null coalescing operator untuk menghindari undefined array key
+                                            $statusPengambilan = $row['pengambilan'] ?? 'belum'; 
+                                            
+                                            if ($statusPengambilan == 'diambil') { ?>
                                                 <span class="badge bg-success px-2 py-1 small">Sudah Diambil</span>
 
                                             <?php } else { ?>
